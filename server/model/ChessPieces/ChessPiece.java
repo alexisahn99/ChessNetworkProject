@@ -1,6 +1,6 @@
-package Chess.model.ChessPieces;
+package server.model.ChessPieces;
 
-import Chess.model.ChessBoard;
+import server.model.ChessBoard;
 
 import java.io.Serializable;
 import java.util.ArrayList;

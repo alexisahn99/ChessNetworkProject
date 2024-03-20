@@ -1,11 +1,11 @@
-package Chess.model;
+package server.model;
 
 import java.util.ArrayList;
 import java.io.Serializable;
-import Chess.model.ChessPieces.*;
-import Chess.view.UnicodeMap;
-import Chess.GameInterface;
-import Chess.GameObserver;
+import server.model.ChessPieces.*;
+import server.GameInterface;
+import server.GameObserver;
+import server.UnicodeMap;
 
 public class ChessBoard implements GameInterface, Serializable
 {
