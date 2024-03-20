@@ -1,4 +1,4 @@
-package Chess.model.ChessPieces;
+package server.model.ChessPieces;
 
 public enum ChessPieceColor {
     W("white"),

@@ -2,7 +2,7 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import Chess.model.ChessPieces.ChessPieceColor;
+import server.model.ChessPieces.ChessPieceColor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

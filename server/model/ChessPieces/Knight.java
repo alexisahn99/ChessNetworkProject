@@ -1,7 +1,7 @@
-package Chess.model.ChessPieces;
+package server.model.ChessPieces;
 
-import Chess.model.ChessBoard;
-import Chess.view.UnicodeMap;
+import server.model.ChessBoard;
+import server.UnicodeMap;
 
 import java.util.ArrayList;
 import java.lang.Math;
