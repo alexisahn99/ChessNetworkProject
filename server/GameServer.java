@@ -17,11 +17,11 @@ class Node {
     Node next;
 
     //Constructor for a new node
-    ClientNode(int client, String player, String name) {
-        client = client;
-        uid = player;
-        name = name;
-        next = null;
+    Node(int client, String player, String name) {
+        this.client = client;
+        this.uid = player;
+        this.name = name;
+        this.next = null;
     }
 }
 
