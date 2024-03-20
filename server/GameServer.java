@@ -11,17 +11,19 @@ import java.net.Socket;
 import java.net.SocketException;
 
 class Node {
-    int client;
-    String uid;
+    Socket client;
+    int uid;
     String name;
     Node next;
 
+    public Node() {}
+
     //Constructor for a new node
-    Node(int client, String player, String name) {
-        this.client = client;
-        this.uid = player;
-        this.name = name;
-        this.next = null;
+    Node(Socket clientID, int player_num, String player_name) {
+        client = clientID;
+        uid = player_num;
+        name = player_name;
+        next = null;
     }
 }
 
@@ -43,7 +45,7 @@ public class GameServer {
         return null;
     }
 
-    private static Node removeNode(int clientID) {
+    private static Node removeNode(Socket clientID) {
         Node cur = head;
         Node prev = head;
         if (head.client == clientID) {
@@ -91,8 +93,8 @@ public class GameServer {
                 } else if (ret > 0) {
                     sender = curNode;
                     // Determine whose move it is and send it
-                    if (prevTurn != curNode && (curNode.uid == "1" || curNode.uid == "2")) {
-                        sendMessage(input);
+                    if (prevTurn != curNode && (curNode.uid == 1 || curNode.uid == 2)) {
+                        sendMove(input);
                         // TODO send to controller
                         prevTurn = curNode;
                     }
@@ -113,7 +115,6 @@ public class GameServer {
 
         Node curNode;
         Node nextNode;
-        int curClient;
         int users = 0;
 
         try {
@@ -142,7 +143,7 @@ public class GameServer {
                     }
 
                     message = "User " + users + " has connected\n";
-                    System.out.println("Player " + users + " connected");
+                    System.out.println(message);
                 } catch (SocketException se) {
                     // Ignore timeout exceptions
                 }
