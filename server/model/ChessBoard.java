@@ -350,6 +350,12 @@ public class ChessBoard implements GameInterface, Serializable
     {
         return this.clickCount;
     }
+
+    public int incrementClickCount()
+    {
+        this.clickCount = this.clickCount + 1;
+        return this.clickCount;
+    }
     
     public void setClickCount(int count)
     {
