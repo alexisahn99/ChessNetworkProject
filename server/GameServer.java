@@ -1,12 +1,12 @@
 package server;
 
 import java.io.*;
-import java.net.*;
 //import com.google.gson.Gson;
 
 import server.controller.Controller;
 import server.controller.Tuple;
 import server.model.Move;
+import server.model.ChessPieces.ChessPieceColor;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,7 +32,10 @@ class Node {
 public class GameServer {
     private static Node head;
     private static Node sender;
-    private static Node prevTurn;
+    private static ChessPieceColor prevTurn;
+    private static ChessPieceColor curTurn;
+    private static int curUid;
+    private static int prevUid;
 
     private static Node findLastNode() {
         Node cur = head;
@@ -116,8 +119,9 @@ public class GameServer {
                 } else if (ret > 0) {
 
                     sender = curNode;
+                    curUid = curNode.uid;
                     // Determine whose move it is and send it
-                    if (prevTurn != curNode && (curNode.uid == 1 || curNode.uid == 2)) {
+                    if (prevTurn == curTurn && prevUid != curUid && (curNode.uid == 1 || curNode.uid == 2)) {
                         /* 
                         // Receive JSON data
                         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
@@ -134,21 +138,27 @@ public class GameServer {
                             Move curMove = (Move) in.readObject(); 
 
                             // try move
-                            Tuple result = controller.selectDestination(curMove.getRow(), curMove.getCol());
+                            Tuple result = controller.userPressed(curMove.getRow(), curMove.getCol());
+                            curTurn = result.getCurrentPlayerColor();
 
                             // convert result
                             //String moveResult = gson.toJson(result);
 
                             // send result
                             sendMove(result);
+
+                            if (curTurn != prevTurn) {
+                                prevTurn = curTurn;
+                                if (curNode.uid == 1) {
+                                    prevUid = 1;
+                                } else if (curNode.uid == 2) {
+                                    prevUid = 2;
+                                }
+                            }
+
+                        
                         } catch(ClassNotFoundException e) {
                             e.printStackTrace();
-                        }
-
-                        // update current player if turn done
-                        // TODO Need to fully implement endOfTurn in controller
-                        if (controller.endOfTurn()) {
-                            prevTurn = curNode;
                         }
                     }
                 }
@@ -187,7 +197,8 @@ public class GameServer {
                         head = new Node(clientSocket, users, "Player " + users);
                         head.next = null;
                         sender = head;
-                        prevTurn = head;
+                        prevTurn = ChessPieceColor.W;
+                        prevUid = head.uid;
                     } else {
                         curNode = findLastNode();
                         nextNode = new Node(clientSocket, users, "Player " + users);
