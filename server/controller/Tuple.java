@@ -4,31 +4,42 @@ import java.util.ArrayList;
 import server.model.ChessPieces.ChessPieceColor;
 
 public class Tuple {
-    private boolean function_success;
-    private ArrayList<int[]> chess_pieces;
-    private boolean game_over;
-    private ChessPieceColor current_player;
+    private FunctionFlag functionFlag;
+    private boolean isValidMove;
+    private ArrayList<int[]> chessPieces;
+    private boolean isGameOver;
+    private ChessPieceColor currentPlayer;
 
-    public Tuple(boolean function_success, ArrayList<int[]> chess_pieces, boolean game_over, ChessPieceColor current_player) {
-        this.function_success = function_success;
-        this.chess_pieces = chess_pieces;
-        this.game_over = game_over;
-        this.current_player = current_player;
+    public Tuple(FunctionFlag functionFlag, 
+                 boolean isValidMove, 
+                 ArrayList<int[]> chessPieces, 
+                 boolean isGameOver, 
+                 ChessPieceColor currentPlayer) 
+    {
+        this.functionFlag = functionFlag;
+        this.isValidMove = isValidMove;
+        this.chessPieces = chessPieces;
+        this.isGameOver = isGameOver;
+        this.currentPlayer = currentPlayer;
+    }
+
+    public FunctionFlag getFunctionFlag() {
+        return this.functionFlag;
     }
 
     public boolean getFunctionSuccess() {
-        return function_success;
+        return this.isValidMove;
     }
 
     public ArrayList<int[]> getChessPieces() {
-        return chess_pieces;
+        return this.chessPieces;
     }
 
     public boolean getGameOver() {
-        return game_over;
+        return this.isGameOver;
     }
 
     public ChessPieceColor getCurrentPlayerColor() {
-        return current_player;
+        return this.currentPlayer;
     }
 }
