@@ -2,10 +2,12 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import server.model.ChessPieces.ChessPieceColor;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+//import com.google.gson.Gson;
+
+import server.controller.Controller;
+import server.controller.Tuple;
+import server.model.Move;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -65,13 +67,33 @@ public class GameServer {
     }
 
     // Send the move to all of the clients 
-    private static void sendMove(byte[] move) {
+    private static void sendMove(Tuple move) {
         Node sendNode = head;
         while (sendNode != null) {
             if (sendNode.client != sender.client) {
                 try {
+                    // Uncomment if using Gson
+                    /* 
                     OutputStream outputStream = sendNode.client.getOutputStream();
-                    outputStream.write(move);
+                    PrintWriter out = new PrintWriter(outputStream, true);
+                    out.println(move);
+                    */
+
+                    // Serialize complex data to bytes
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bos);
+                    out.writeObject(move);
+                    out.flush();
+                    byte[] bytes = bos.toByteArray();
+
+                    OutputStream outputStream = sendNode.client.getOutputStream();
+                    outputStream.write(bytes);
+
+                    // Close resources
+                    out.close();
+                    bos.close();
+                    outputStream.close();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -80,23 +102,54 @@ public class GameServer {
         }
     }
 
-    private static void playGame() {
+    private static void playGame(Controller controller) {
         Node curNode = head;
-        byte[] input = new byte[1024];
+        byte[] input = new byte[16];
         while (curNode != null) {
             try {
                 InputStream inputStream = curNode.client.getInputStream();
                 int ret = inputStream.read(input);
+
                 if (ret == -1) {
                     // Handle disconnection
                     curNode = removeNode(curNode.client);
                 } else if (ret > 0) {
+
                     sender = curNode;
                     // Determine whose move it is and send it
                     if (prevTurn != curNode && (curNode.uid == 1 || curNode.uid == 2)) {
-                        sendMove(input);
-                        // TODO send to controller
-                        prevTurn = curNode;
+                        /* 
+                        // Receive JSON data
+                        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                        String json = in.readLine();
+
+                        // Deserialize JSON to complex data object
+                        Gson gson = new Gson();
+                        Move curMove = gson.fromJson(json, Move.class);
+                        */
+
+                        //Alternative to using Gson
+                        ObjectInputStream in = new ObjectInputStream(inputStream);
+                        try {
+                            Move curMove = (Move) in.readObject(); 
+
+                            // try move
+                            Tuple result = controller.selectDestination(curMove.getRow(), curMove.getCol());
+
+                            // convert result
+                            //String moveResult = gson.toJson(result);
+
+                            // send result
+                            sendMove(result);
+                        } catch(ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        // update current player if turn done
+                        // TODO Need to fully implement endOfTurn in controller
+                        if (controller.endOfTurn()) {
+                            prevTurn = curNode;
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -116,6 +169,7 @@ public class GameServer {
         Node curNode;
         Node nextNode;
         int users = 0;
+        Controller controller = new Controller(null);
 
         try {
             ServerSocket serverSocket = new ServerSocket(PORT_NUM);
@@ -147,7 +201,7 @@ public class GameServer {
                 } catch (SocketException se) {
                     // Ignore timeout exceptions
                 }
-                playGame();
+                playGame(controller);
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
