@@ -103,8 +103,8 @@ public class Controller {
         this.endOfTurn();
     }
 
-    // TODO: never used
-    public void endOfTurn()
+    // TODO: never used; need to implement for proper game server function
+    public boolean endOfTurn()
     {
         this.switchPlayers();
         // Check for game over
@@ -116,7 +116,9 @@ public class Controller {
         {
             ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
             // this.view.enableSquares(allCurrentPieces);
+            return true;
         }
+        return false;
     }
 
 }
