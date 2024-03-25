@@ -3,26 +3,35 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class HeadServer implements Runnable
-{
+public class Server implements Runnable {
+
     private ArrayList<ConnectionHandler> connections;
     private ServerSocket server;
+    private Socket client;
     private boolean done;
     private ExecutorService pool;
-    private ArrayList<String> serverSocketNums;
+    private PrintWriter out;
+    private int portNum;
     
-    public HeadServer()
+    public Server(int portNum)
     {
+        this.portNum = portNum;
         connections = new ArrayList<>();
-        serverSocketNums = new ArrayList<>();
         done = false;
     }
 
+
+    @Override
     public void run()
     {
         try
         {
-            server = new ServerSocket(9999);
+            // handles connection with head server
+            client = new Socket("127.0.0.1", 9999);
+            out = new PrintWriter(client.getOutputStream(), true);
+            out.println("server");
+
+            server = new ServerSocket(portNum);
             pool = Executors.newCachedThreadPool();
             while (!done) {
                 Socket client = server.accept();
@@ -33,36 +42,46 @@ public class HeadServer implements Runnable
         }
         catch (IOException e)
         {
-            //shutdown();
+            shutdown();
         }
     }
 
-    public void shutdown() 
+    public void broadcast(String message)
+    {
+        for (ConnectionHandler ch : connections)
+        {
+            if (ch != null) 
+            {
+                ch.sendMessage(message);
+            }
+        }
+    }
+
+    public void shutdown()
     {
         try
         {
             done = true;
-            pool.shutdown();
-            if (!server.isClosed()) 
+            if (!server.isClosed())
             {
                 server.close();
             }
-
-            for (ConnectionHandler ch : connections)
+            for (ConnectionHandler ch : connections) 
             {
                 ch.shutdown();
             }
         }
+
         catch (IOException e)
         {
 
         }
     }
 
+
     class ConnectionHandler implements Runnable
     {
         private Socket client;
-        private String whichClient;
         private BufferedReader in;
         private PrintWriter out;
         private String nickname;
@@ -80,43 +99,38 @@ public class HeadServer implements Runnable
             {
                 out = new PrintWriter(client.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                whichClient = in.readLine();
-                System.out.println(whichClient + " connected");
-
-                if (whichClient.startsWith("server"))
+                out.println("Please enter a nickname: ");
+                nickname = in.readLine();
+                System.out.println(nickname + " connected");
+                broadcast(nickname + " joined the chat!");
+                String message;
+                while ((message = in.readLine()) != null)
                 {
-                    while (!done)
+                    if (message.startsWith("/nick "))
                     {
+                        String[] messageSplit = message.split(" ", 2);
+                        if (messageSplit.length == 2)
+                        {
+                            broadcast(nickname + " renamed themselves to " + messageSplit[1]);
+                            System.out.println(nickname + " renamed themselves to " + messageSplit[1]);
+                            nickname = messageSplit[1];
+                            out.println("Succesfully changed nickname to " + nickname);
+                        }
+                        else
+                        {
+                            out.println("No nickname provided");
+                        }
+                    }
+                    else if (message.startsWith("/quit"))
+                    {
+                        broadcast(nickname + " left the chat.");
+                        shutdown();
+                    }
+                    else
+                    {
+                        broadcast(nickname + ": " + message); 
                     }
                 }
-                else if (whichClient.startsWith("client"))
-                {
-                    out.println("Please enter a nickname: ");
-                    nickname = in.readLine();
-                    //out.println(nickname);
-                    System.out.println(nickname + " connected");
-                    String message;
-                    while ((message = in.readLine()) != null)
-                    {
-                        System.out.println(message);
-                        if (message.startsWith("server1"))
-                        {
-                            System.out.println("Connecting client to server 1");
-                            shutdown();
-                        }
-
-                        else if (message.startsWith("quit"))
-                        {
-                            shutdown();
-                        }
-
-                        
-                    }
-
-                }
-
-
-                
             }
             catch (IOException e)
             {
@@ -150,7 +164,8 @@ public class HeadServer implements Runnable
 
     public static void main(String[] args)
     {
-        HeadServer server = new HeadServer();
+        int portNum = Integer.parseInt(args[0]);
+        Server server = new Server(portNum);
         server.run();
     }
 }
