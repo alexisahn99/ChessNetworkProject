@@ -2,13 +2,23 @@ package client;
 
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
+
 import javax.swing.*;
+
+import server.model.Move;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 
 public class Client {
+<<<<<<< HEAD
     private static ObjectOutputStream output;
+=======
+    private static ObjectOutputStream out;
+    private static ObjectInputStream in;
+>>>>>>> 27ce136 (ServerTest2 Uses a different implementation than GameServer. Currently, it can receive data from the client, but an error occurs in the model with the observer causing things to break.)
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -18,11 +28,24 @@ public class Client {
         String hostname = args[0];
         int port = Integer.parseInt(args[1]);
 
+<<<<<<< HEAD
         try (Socket socket = new Socket(hostname, port)) {
             output = new ObjectOutputStream(socket.getOutputStream());
+=======
+        try  {
+            Socket clientSocket = new Socket(hostname, port);
+            System.out.println("Connected to server.");
+
+             out = new ObjectOutputStream(clientSocket.getOutputStream());
+
+             // TODO implement how to handle response from server.
+             in = new ObjectInputStream(clientSocket.getInputStream());
+
+
+>>>>>>> 27ce136 (ServerTest2 Uses a different implementation than GameServer. Currently, it can receive data from the client, but an error occurs in the model with the observer causing things to break.)
             SwingUtilities.invokeLater(Client::tempGUI);
         } catch (IOException err) {
-            System.out.println("I/O error: " + err.getMessage());
+            System.out.println("I/O error creating socket: " + err.getMessage());
         }
     }
 
@@ -35,10 +58,23 @@ public class Client {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            System.out.println("Sending data to server: " + Arrays.toString(buttonValue));
             try {
+<<<<<<< HEAD
                 output.writeObject(buttonValue);
                 output.flush();
+=======
+
+                Move move = new Move(buttonValue[0], buttonValue[1]);
+                System.out.println("Sending data to server: " + buttonValue[0] + buttonValue[1]);
+
+
+                // Serialize complex data to bytes
+                out.writeObject(move);
+
+                System.out.println("Data sent");
+
+
+>>>>>>> 27ce136 (ServerTest2 Uses a different implementation than GameServer. Currently, it can receive data from the client, but an error occurs in the model with the observer causing things to break.)
             } catch (IOException err) {
                 System.out.println("I/O error: " + err.getMessage());
             }

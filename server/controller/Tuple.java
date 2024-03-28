@@ -1,9 +1,10 @@
 package server.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import server.model.ChessPieces.ChessPieceColor;
 
-public class Tuple {
+public class Tuple implements Serializable {
     private FunctionFlag functionFlag;
     private boolean isValidMove;
     private ArrayList<int[]> chessPieces;
