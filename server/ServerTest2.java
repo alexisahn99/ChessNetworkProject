@@ -3,18 +3,14 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import server.UserThread;
 import server.controller.Tuple;
- 
-/**
- * This is the chat server program.
- * Press Ctrl + C to terminate the program.
- *
- * @author www.codejava.net
- */
+import server.model.ChessPieces.ChessPieceColor;
+
+
 public class ServerTest2 {
     private int port;
     private Set<UserThread> userThreads = new HashSet<>();
+    private int userNum = 0;
  
     public ServerTest2(int port) {
         this.port = port;
@@ -26,11 +22,22 @@ public class ServerTest2 {
             System.out.println("Game Server is listening on port " + port);
  
             while (true) {
+            
                 Socket socket = serverSocket.accept();
                 System.out.println("New user connected");
+
+                userNum++;
  
                 UserThread newUser = new UserThread(socket, this);
                 userThreads.add(newUser);
+                if (userNum == 1) {
+                    newUser.setPlayerColor(ChessPieceColor.W);
+                } else if (userNum == 1) {
+                    newUser.setPlayerColor(ChessPieceColor.B);
+                } else {
+                    newUser.setPlayerColor(null);
+                }
+                
                 newUser.start();
             }
  

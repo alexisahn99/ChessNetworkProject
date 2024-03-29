@@ -17,6 +17,7 @@ public class UserThread extends Thread {
     private ObjectOutputStream out;
     private ChessPieceColor curTurn;
     private ChessPieceColor prevTurn;
+    private ChessPieceColor playerColor;
  
     public UserThread(Socket socket, ServerTest2 server) {
         this.socket = socket;
@@ -39,21 +40,23 @@ public class UserThread extends Thread {
             while(true) {
                 try {
                     
-                    Move curMove = (Move) in.readObject();
+                    if (prevTurn == playerColor) {
+                        Move curMove = (Move) in.readObject();
 
-                    System.out.println("Data read");
-
-                    Tuple moveResponse = controller.userPressed(curMove.getRow(), curMove.getCol());
-                    curTurn = moveResponse.getCurrentPlayerColor();
-
-                    server.broadcast(moveResponse, this);
-
-
-                    if (curTurn != prevTurn) {
-                        prevTurn = curTurn;
-                        // Send message to repaint the board. 
+                        System.out.println("Data read");
+    
+                        Tuple moveResponse = controller.userPressed(curMove.getRow(), curMove.getCol());
+                        curTurn = moveResponse.getCurrentPlayerColor();
+    
+                        server.broadcast(moveResponse, this);
+    
+    
+                        if (curTurn != prevTurn) {
+                            prevTurn = curTurn;
+                            // Send message to repaint the board. 
+                        }    
                     }
-                  
+                    
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -82,5 +85,9 @@ public class UserThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    void setPlayerColor(ChessPieceColor color) {
+        playerColor = color;
     }
 }
