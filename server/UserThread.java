@@ -40,7 +40,7 @@ public class UserThread extends Thread {
             while(true) {
                 try {
                     
-                    if (prevTurn == playerColor) {
+                    if (prevTurn == playerColor && (playerColor == ChessPieceColor.W || playerColor == ChessPieceColor.B)) {
                         Move curMove = (Move) in.readObject();
 
                         System.out.println("Data read");

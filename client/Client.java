@@ -2,15 +2,10 @@ package client;
 
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
-
 import javax.swing.*;
-
 import server.model.Move;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 
 public class Client {
 <<<<<<< HEAD

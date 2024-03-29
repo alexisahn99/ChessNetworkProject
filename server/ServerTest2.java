@@ -35,9 +35,9 @@ public class ServerTest2 {
                 } else if (userNum == 1) {
                     newUser.setPlayerColor(ChessPieceColor.B);
                 } else {
-                    newUser.setPlayerColor(null);
+                    newUser.setPlayerColor(ChessPieceColor.R);
                 }
-                
+
                 newUser.start();
             }
  
