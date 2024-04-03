@@ -1,6 +1,7 @@
 package server;
 
 import java.io.*;
+<<<<<<< HEAD
 //import com.google.gson.Gson;
 
 import server.controller.Controller;
@@ -204,25 +205,46 @@ public class GameServer {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     //clientSocket.setSoTimeout(100);
+=======
+import java.net.*;
+import java.util.*;
+import server.controller.Tuple;
+import server.model.ChessPieces.ChessPieceColor;
 
-                    users++;
-                    String message;
-                    if (head == null) {
-                        head = new Node(clientSocket, users, "Player " + users);
-                        head.next = null;
-                        sender = head;
-                        prevTurn = ChessPieceColor.W;
-                        curTurn = ChessPieceColor.W;
-                        curUid = head.uid;
-                        prevUid = 0;
-                    } else {
-                        curNode = findLastNode();
-                        nextNode = new Node(clientSocket, users, "Player " + users);
-                        curNode.next = nextNode;
-                        nextNode.next = null;
-                        sender = nextNode;
-                    }
 
+public class GameServer {
+    private int port;
+    private Set<UserThread> userThreads = new HashSet<>();
+    private int userNum = 0;
+ 
+    public GameServer(int port) {
+        this.port = port;
+    }
+ 
+    public void execute() {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+ 
+            System.out.println("Game Server is listening on port " + port);
+ 
+            while (true) {
+            
+                Socket socket = serverSocket.accept();
+                System.out.println("New user connected");
+>>>>>>> af4288d (Clean up code)
+
+                userNum++;
+ 
+                UserThread newUser = new UserThread(socket, this);
+                userThreads.add(newUser);
+                if (userNum == 1) {
+                    newUser.setPlayerColor(ChessPieceColor.W);
+                } else if (userNum == 1) {
+                    newUser.setPlayerColor(ChessPieceColor.B);
+                } else {
+                    newUser.setPlayerColor(ChessPieceColor.R);
+                }
+
+<<<<<<< HEAD
                     message = "User " + users + " has connected\n";
                     System.out.println(message);
                 } catch (SocketException se) {
@@ -234,10 +256,43 @@ public class GameServer {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+=======
+                newUser.start();
+>>>>>>> af4288d (Clean up code)
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+ 
+        } catch (IOException ex) {
+            System.out.println("Error in the server: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
-}
  
+<<<<<<< HEAD
+=======
+    public static void main(String[] args) {
+        /*
+        if (args.length < 1) {
+            System.out.println("Syntax: java GameServer <port-number>");
+            System.exit(0);
+        }
+        */
+ 
+        int port = 21001;  //Integer.parseInt(args[0]);
+ 
+        GameServer server = new GameServer(port);
+        server.execute();
+    }
+ 
+    /**
+     * Delivers data from one user to others (broadcasting)
+     */
+    void broadcast(Tuple result, UserThread excludeUser) {
+        for (UserThread aUser : userThreads) {
+            if (aUser != excludeUser) {
+                aUser.sendMove(result);
+            }
+        }
+
+    }
+}
+>>>>>>> af4288d (Clean up code)

@@ -13,13 +13,13 @@ import server.model.ChessPieces.*;
  */
 public class UserThread extends Thread {
     private Socket socket;
-    private ServerTest2 server;
+    private GameServer server;
     private ObjectOutputStream out;
     private ChessPieceColor curTurn;
     private ChessPieceColor prevTurn;
     private ChessPieceColor playerColor;
  
-    public UserThread(Socket socket, ServerTest2 server) {
+    public UserThread(Socket socket, GameServer server) {
         this.socket = socket;
         this.server = server;
         prevTurn = ChessPieceColor.W;
