@@ -12,12 +12,14 @@ public class Client {
     private static ObjectInputStream in;
 
     public static void main(String[] args) {
+        /* 
         if (args.length < 2) {
             System.out.println("Usage: java TestClient <server IP> <port number>");
             return;
         }
-        String hostname = args[0];
-        int port = Integer.parseInt(args[1]);
+        */
+        String hostname = "127.0.0.1"; //args[0];
+        int port = 21001; // Integer.parseInt(args[1]);
 
         try  {
             Socket clientSocket = new Socket(hostname, port);
