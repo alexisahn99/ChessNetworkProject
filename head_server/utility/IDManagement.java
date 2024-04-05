@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class IDManagement {
     private static Set<String> allClientIDs = new HashSet<>();
-    private static Set<Integer> allServerPorts = new HashSet<>();
+    private static Set<Integer> allPortNumber = new HashSet<>();
 
     // Adds a client ID to the set if not already present, ensuring uniqueness
     public static boolean addClientId(String clientId) {
@@ -18,22 +18,13 @@ public class IDManagement {
     }
 
     // Adds a server port to the set if not already present, ensuring uniqueness
-    public static boolean addServerPort(int portNumber) {
-        return allServerPorts.add(portNumber);
+    public static boolean addPortNumber(int portNumber) {
+        return allPortNumber.add(portNumber);
     }
 
     // Removes a server port from the set
-    public static boolean removeServerPort(int portNumber) {
-        return allServerPorts.remove(portNumber);
+    public static boolean removePortNumber(int portNumber) {
+        return allPortNumber.remove(portNumber);
     }
 
-    public static boolean updateClientId(ClientNode client, String newId) {
-        if (!allClientIDs.contains(newId)) {
-            removeClientId(client.getClientId());
-            client.setClientId(newId);
-            addClientId(newId);
-            return true;
-        }
-        return false; // New ID is already in use.
-    }
 }
