@@ -1,3 +1,5 @@
+package head_server;
+
 import javax.swing.*;
 import java.awt.event.*;
 
