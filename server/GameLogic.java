@@ -10,13 +10,15 @@ public class GameLogic {
 
     public GameLogic() {}
 
-    Tuple checkMove(ChessPieceColor playerColor, Move move) {
+    Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
 
         if (playerColor == controller.getCurrentPlayer()) {
 
             System.out.println("Data read");
 
             Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum()); 
+
+            moveResponse.setCentralPortNum(centralPortNum);
             
             if (playerColor != moveResponse.getCurrentPlayerColor()) {
                 // Logic to repaint the board

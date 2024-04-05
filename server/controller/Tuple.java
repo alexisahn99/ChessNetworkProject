@@ -50,4 +50,8 @@ public class Tuple implements Serializable {
     public int getCentralPortNum() {
         return this.centralPortNumber;
     }
+
+    public void setCentralPortNum(int portNum) {
+        this.centralPortNumber = portNum;
+    }
 }
