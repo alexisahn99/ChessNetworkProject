@@ -31,8 +31,8 @@ public class GameServer {
                 System.out.println("New user connected");
 
                 userNum++;
- 
-                UserThread newUser = new UserThread(socket, this);
+                GameLogic gameLogic = new GameLogic();
+                UserThread newUser = new UserThread(socket, this, gameLogic);
                 userThreads.add(newUser);
                 if (userNum == 1) {
                     newUser.setPlayerColor(ChessPieceColor.W);

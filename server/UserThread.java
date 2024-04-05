@@ -14,14 +14,16 @@ import server.model.ChessPieces.*;
 public class UserThread extends Thread {
     private Socket socket;
     private GameServer server;
+    private GameLogic gameLogic;
     private ObjectOutputStream out;
     private ChessPieceColor curTurn;
     private ChessPieceColor prevTurn;
     private ChessPieceColor playerColor;
  
-    public UserThread(Socket socket, GameServer server) {
+    public UserThread(Socket socket, GameServer server, GameLogic gameLogic) {
         this.socket = socket;
         this.server = server;
+        this.gameLogic = gameLogic;
         prevTurn = ChessPieceColor.W;
     }
  
@@ -34,29 +36,17 @@ public class UserThread extends Thread {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
  
             System.out.println("Input and Output streams setup");
- 
-            Controller controller = new Controller(null);
- 
+  
             while(true) {
                 try {
                     
-                    if (prevTurn == playerColor && (playerColor == ChessPieceColor.W || playerColor == ChessPieceColor.B)) {
                         Move curMove = (Move) in.readObject();
 
-                        System.out.println("Data read");
-    
-                        Tuple moveResponse = controller.userPressed(curMove.getRow(), curMove.getCol());
-                        curTurn = moveResponse.getCurrentPlayerColor();
-    
-                        server.broadcast(moveResponse, this);
-    
-    
-                        if (curTurn != prevTurn) {
-                            prevTurn = curTurn;
-                            // Send message to repaint the board. 
-                        }    
-                    }
-                    
+                        Tuple logicCheck = gameLogic.checkMove(playerColor, curMove);
+
+                        if(logicCheck != null) {
+                            server.broadcast(logicCheck, this);
+                        }                 
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
