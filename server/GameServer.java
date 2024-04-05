@@ -3,6 +3,10 @@ package server;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+import javax.swing.SwingUtilities;
+
+import client.Client;
 import server.controller.Tuple;
 import server.model.ChessPieces.ChessPieceColor;
 
@@ -54,9 +58,25 @@ public class GameServer {
             System.exit(0);
         }
         */
- 
+
+
+        // TODO change so that this number is not static. Will otherwise throw an error when connecting
+        // multiple GameServers to the head server
         int port = 21001;  //Integer.parseInt(args[0]);
+
+        String hostname = "127.0.0.1";
+        int headport = 32156; // Integer.parseInt(args[1]);
  
+        // Connect to the head server
+        try  {
+            Socket clientSocket = new Socket(hostname, headport);
+            System.out.println("Connected to head server.");
+
+        } catch (IOException err) {
+            System.out.println("I/O error creating socket with head server: " + err.getMessage());
+        }
+
+        // Create the game server and run it
         GameServer server = new GameServer(port);
         server.execute();
     }
