@@ -17,6 +17,7 @@ public class UserThread extends Thread {
     private GameLogic gameLogic;
     private ObjectOutputStream out;
     private ChessPieceColor playerColor;
+    private int playerPortNumber;
  
     public UserThread(Socket socket, GameServer server, GameLogic gameLogic) {
         this.socket = socket;
@@ -37,13 +38,19 @@ public class UserThread extends Thread {
             while(true) {
                 try {
                     
-                        Move curMove = (Move) in.readObject();
+                    // Move contains [row, col, port#]
+                    Move curMove = (Move) in.readObject();
+                    playerPortNumber = curMove.getPortNum();
 
-                        Tuple logicCheck = gameLogic.checkMove(playerColor, curMove);
+                    if (server.getCentralPortNum() == 0) {
+                        server.setCentralPortNum(playerPortNumber);
+                    }
 
-                        if(logicCheck != null) {
-                            server.broadcast(logicCheck, this);
-                        }                 
+                    Tuple logicCheck = gameLogic.checkMove(playerColor, curMove);
+
+                    if(logicCheck != null) {
+                        server.broadcast(logicCheck, this);
+                    }                 
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -77,5 +84,9 @@ public class UserThread extends Thread {
     void setPlayerColor(ChessPieceColor color) {
         playerColor = color;
         System.out.println("Player pieces set to "+ color.toString());
+    }
+
+    int getPortNumber() {
+        return playerPortNumber;
     }
 }

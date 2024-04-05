@@ -13,6 +13,7 @@ public class GameServer {
     private int port;
     private Set<UserThread> userThreads = new HashSet<>();
     private int userNum = 0;
+    private int centralPortNum = 0;
  
     public GameServer(int port) {
         this.port = port;
@@ -89,5 +90,13 @@ public class GameServer {
             }
         }
 
+    }
+
+    void setCentralPortNum(int portNum) {
+        centralPortNum = portNum;
+    }
+
+    int getCentralPortNum() {
+        return centralPortNum;
     }
 }

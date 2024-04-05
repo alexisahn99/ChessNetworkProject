@@ -32,22 +32,22 @@ public class Controller {
         }
     }
 
-    public Tuple userPressed(int row, int col)
+    public Tuple userPressed(int row, int col, int portNum)
     {
         int clickCount = this.board.incrementClickCount();
 
         if (clickCount == 1)
         {
-            return this.selectPiece(row, col);
+            return this.selectPiece(row, col, portNum);
         }
         else 
         {
             this.board.setClickCount(0); // if invalidMove, you reset selecting a piece. else, validMove
-            return this.selectDestination(row, col);
+            return this.selectDestination(row, col, portNum);
         }
     }
 
-    public Tuple selectPiece(int fromRow, int fromCol)
+    public Tuple selectPiece(int fromRow, int fromCol, int portNum)
     // This function always returns movableSquares that a piece can move to. 
     // It may also return an empty movable squares. 
     {
@@ -59,10 +59,10 @@ public class Controller {
             this.board.setClickCount(0);
             isValidMove = false;
         }
-        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, false, this.getCurrentPlayer());
+        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, false, this.getCurrentPlayer(), portNum);
     }
 
-    public Tuple selectDestination(int toRow, int toCol)
+    public Tuple selectDestination(int toRow, int toCol, int portNum)
     {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
         boolean isValidMove = false;
@@ -93,7 +93,7 @@ public class Controller {
             allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
         }
 
-        return new Tuple(functionFlag, isValidMove, allCurrentPieces, isGameOver, this.getCurrentPlayer());
+        return new Tuple(functionFlag, isValidMove, allCurrentPieces, isGameOver, this.getCurrentPlayer(), portNum);
     }
 
     // TODO: never used
