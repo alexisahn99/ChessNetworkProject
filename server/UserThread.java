@@ -46,7 +46,7 @@ public class UserThread extends Thread {
                         server.setCentralPortNum(playerPortNumber);
                     }
 
-                    Tuple logicCheck = gameLogic.checkMove(playerColor, curMove);
+                    Tuple logicCheck = gameLogic.checkMove(playerColor, curMove, server.getCentralPortNum());
 
                     if(logicCheck != null) {
                         server.broadcast(logicCheck, this);
