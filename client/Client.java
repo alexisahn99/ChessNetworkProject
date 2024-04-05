@@ -20,6 +20,7 @@ public class Client {
     private static JLabel statusLabel;
 
     public static void main(String[] args) {
+<<<<<<< HEAD
         /*
          * if (args.length < 2) {
          * System.out.println("Usage: java TestClient <server IP> <port number>");
@@ -27,6 +28,15 @@ public class Client {
          * }
          */
         String hostname = "127.0.0.1"; // args[0];
+=======
+        /* 
+        if (args.length < 2) {
+            System.out.println("Usage: java TestClient <server IP> <port number>");
+            return;
+        }
+        */
+        String hostname = "127.0.0.1"; //args[0];
+>>>>>>> 84bf2724c5560e0ba7980da82823211c5ebfb151
         int port = 21001; // Integer.parseInt(args[1]);
 
         try {
