@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import javax.swing.SwingUtilities;
-
 import client.Client;
 import server.controller.Tuple;
 import server.model.ChessPieces.ChessPieceColor;
@@ -31,12 +29,12 @@ public class GameServer {
                 System.out.println("New user connected");
 
                 userNum++;
- 
-                UserThread newUser = new UserThread(socket, this);
+                GameLogic gameLogic = new GameLogic();
+                UserThread newUser = new UserThread(socket, this, gameLogic);
                 userThreads.add(newUser);
                 if (userNum == 1) {
                     newUser.setPlayerColor(ChessPieceColor.W);
-                } else if (userNum == 1) {
+                } else if (userNum == 2) {
                     newUser.setPlayerColor(ChessPieceColor.B);
                 } else {
                     newUser.setPlayerColor(ChessPieceColor.R);
