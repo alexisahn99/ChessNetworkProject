@@ -10,18 +10,21 @@ public class Tuple implements Serializable {
     private ArrayList<int[]> chessPieces;
     private boolean isGameOver;
     private ChessPieceColor currentPlayer;
+    private int centralPortNumber;
 
     public Tuple(FunctionFlag functionFlag, 
                  boolean isValidMove, 
                  ArrayList<int[]> chessPieces, 
                  boolean isGameOver, 
-                 ChessPieceColor currentPlayer) 
+                 ChessPieceColor currentPlayer,
+                 int centralPortNumber) 
     {
         this.functionFlag = functionFlag;
         this.isValidMove = isValidMove;
         this.chessPieces = chessPieces;
         this.isGameOver = isGameOver;
         this.currentPlayer = currentPlayer;
+        this.centralPortNumber = centralPortNumber;
     }
 
     public FunctionFlag getFunctionFlag() {
@@ -42,5 +45,9 @@ public class Tuple implements Serializable {
 
     public ChessPieceColor getCurrentPlayerColor() {
         return this.currentPlayer;
+    }
+
+    public int getCentralPortNum() {
+        return this.centralPortNumber;
     }
 }
