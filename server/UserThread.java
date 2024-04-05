@@ -16,15 +16,12 @@ public class UserThread extends Thread {
     private GameServer server;
     private GameLogic gameLogic;
     private ObjectOutputStream out;
-    private ChessPieceColor curTurn;
-    private ChessPieceColor prevTurn;
     private ChessPieceColor playerColor;
  
     public UserThread(Socket socket, GameServer server, GameLogic gameLogic) {
         this.socket = socket;
         this.server = server;
         this.gameLogic = gameLogic;
-        prevTurn = ChessPieceColor.W;
     }
  
     public void run() {
@@ -79,5 +76,6 @@ public class UserThread extends Thread {
 
     void setPlayerColor(ChessPieceColor color) {
         playerColor = color;
+        System.out.println("Player pieces set to "+ color.toString());
     }
 }
