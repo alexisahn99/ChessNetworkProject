@@ -16,7 +16,12 @@ public class GameLogic {
 
             System.out.println("Data read");
 
-            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum());  
+            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum()); 
+            
+            if (playerColor != moveResponse.getCurrentPlayerColor()) {
+                // Logic to repaint the board
+            }
+            
             return moveResponse;
         }
         return null;
