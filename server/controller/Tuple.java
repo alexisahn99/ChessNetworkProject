@@ -7,21 +7,24 @@ import server.model.ChessPieces.ChessPieceColor;
 public class Tuple implements Serializable {
     private FunctionFlag functionFlag;
     private boolean isValidMove;
-    private ArrayList<int[]> chessPieces;
+    private ArrayList<int[]> chessPieceLocations;
+    private ArrayList<String> chessPieceUnicodes;
     private boolean isGameOver;
     private ChessPieceColor currentPlayer;
     private int centralPortNumber;
 
     public Tuple(FunctionFlag functionFlag, 
                  boolean isValidMove, 
-                 ArrayList<int[]> chessPieces, 
+                 ArrayList<int[]> chessPieceLocations, 
+                 ArrayList<String> chessPieceUnicodes,
                  boolean isGameOver, 
                  ChessPieceColor currentPlayer,
                  int centralPortNumber) 
     {
         this.functionFlag = functionFlag;
         this.isValidMove = isValidMove;
-        this.chessPieces = chessPieces;
+        this.chessPieceLocations = chessPieceLocations;
+        this.chessPieceUnicodes = chessPieceUnicodes;
         this.isGameOver = isGameOver;
         this.currentPlayer = currentPlayer;
         this.centralPortNumber = centralPortNumber;
@@ -36,7 +39,11 @@ public class Tuple implements Serializable {
     }
 
     public ArrayList<int[]> getChessPieces() {
-        return this.chessPieces;
+        return this.chessPieceLocations;
+    }
+
+    public ArrayList<String> getChessPieceUnicode() {
+        return this.chessPieceUnicodes;
     }
 
     public boolean getGameOver() {

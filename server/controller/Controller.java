@@ -12,7 +12,7 @@ public class Controller {
     private ChessBoard board;
     private ChessPiece currentChessPiece;
 
-    public Controller(ChessBoard board) {
+    public Controller() {
         this.board = new ChessBoard();
     }
 
@@ -59,7 +59,8 @@ public class Controller {
             this.board.setClickCount(0);
             isValidMove = false;
         }
-        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, false, this.getCurrentPlayer(), portNum);
+        
+        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);
     }
 
     public Tuple selectDestination(int toRow, int toCol, int portNum)
@@ -67,6 +68,7 @@ public class Controller {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
         boolean isValidMove = false;
         ArrayList<int[]> allCurrentPieces = null;
+        ArrayList<String> allCurrentPieceUnicodes = null;
         boolean isGameOver = false;
 
         // 1. Determine whether it is a legal destination
@@ -90,35 +92,41 @@ public class Controller {
         }
         else
         {
-            allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
+            allCurrentPieces = this.board.getPiecesLocation();
+            for (int[] piece : allCurrentPieces) {
+                int row = piece[0];
+                int col = piece[1];
+                String label = this.board.getChessPiece(row, col).getLabel();
+                allCurrentPieceUnicodes.add(label);
+            }
         }
 
-        return new Tuple(functionFlag, isValidMove, allCurrentPieces, isGameOver, this.getCurrentPlayer(), portNum);
+        return new Tuple(functionFlag, isValidMove, allCurrentPieces, allCurrentPieceUnicodes, isGameOver, this.getCurrentPlayer(), portNum);
     }
 
     // TODO: never used
-    public void convertPawn(String unicode, ChessPieceColor color)
-    {
-        this.board.addNewPiece(this.currentChessPiece.getCurrentRow(), this.currentChessPiece.getCurrentCol(), unicode, color);
-        this.endOfTurn();
-    }
+    // public void convertPawn(String unicode, ChessPieceColor color)
+    // {
+    //     this.board.addNewPiece(this.currentChessPiece.getCurrentRow(), this.currentChessPiece.getCurrentCol(), unicode, color);
+    //     this.endOfTurn();
+    // }
 
     // TODO: never used; need to implement for proper game server function
-    public boolean endOfTurn()
-    {
-        this.switchPlayers();
-        // Check for game over
-        if (this.board.isGameOver()) 
-        {
-            System.out.println("Game over!");
-        }
-        else
-        {
-            ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
-            // this.view.enableSquares(allCurrentPieces);
-            return true;
-        }
-        return false;
-    }
+    // public boolean endOfTurn()
+    // {
+    //     this.switchPlayers();
+    //     // Check for game over
+    //     if (this.board.isGameOver()) 
+    //     {
+    //         System.out.println("Game over!");
+    //     }
+    //     else
+    //     {
+    //         ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
+    //         // this.view.enableSquares(allCurrentPieces);
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
 }
