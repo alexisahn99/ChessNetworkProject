@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Define the base directory path
-BASE_DIR="/Users/seoyoungahn/Documents/S23/ChessNetworkProject"
+# Dynamically define the base directory path as the current working directory
+BASE_DIR=$(pwd)
 
 # Navigate to the base directory
 cd "$BASE_DIR" || { echo "Could not change to base directory. Exiting."; exit 1; }
