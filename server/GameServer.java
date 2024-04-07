@@ -8,13 +8,12 @@ import client.GameClient;
 import server.controller.Tuple;
 import server.model.ChessPieces.ChessPieceColor;
 
-
 public class GameServer {
     private int port;
     private Set<UserThread> userThreads = new HashSet<>();
     private int userNum = 0;
     private int centralPortNum = 0;
-    private static ObjectOutputStream out;
+    private static OutputStream out;
  
     public GameServer(int port) {
         this.port = port;
@@ -71,8 +70,9 @@ public class GameServer {
         try  {
             Socket clientSocket = new Socket(hostname, headport);
             System.out.println("Connected to head server.");
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            out.writeObject("Server");
+            out = clientSocket.getOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(out);
+            dataOut.writeUTF("Server");
 
         } catch (IOException err) {
             System.out.println("I/O error creating socket with head server: " + err.getMessage());
