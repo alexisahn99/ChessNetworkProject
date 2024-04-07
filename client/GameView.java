@@ -36,6 +36,7 @@ public class GameView {
         boardPanel = new JPanel(new GridLayout(10, 10));
         boardPanel.setBackground(new Color(192, 192, 192));
         generateChessBoard();
+        ChessPieces chessPieces = new ChessPieces(boardSegment);
         mainPanel.add(boardPanel);
 
         frame.getContentPane().add(mainPanel);
