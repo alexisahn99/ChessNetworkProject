@@ -6,108 +6,43 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import client.ChessPieces;
+import client.Chat;
+import peer_to_peer.Connection;
+import peer_to_peer.Peer;
 import server.controller.FunctionFlag;
 import server.controller.Tuple;
 import server.model.Move;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Client {
-    private static ObjectOutputStream out;
-    private static ObjectInputStream in;
-    private static ChatGUI chatGUI;
+public class GameView {
     private static JPanel boardPanel;
     private static JButton[][] boardSegment;
-    private static JLabel statusLabel;
+    private ObjectOutputStream out;
+    private int clientID;
 
-    public static void main(String[] args) {
-        /* 
-        if (args.length < 2) {
-            System.out.println("Usage: java TestClient <server IP> <port number>");
-            return;
-        }
-        */
-        String hostname = "127.0.0.1"; //args[0];
-        int port = 21001; // Integer.parseInt(args[1]);
-
-        try {
-            Socket clientSocket = new Socket(hostname, port);
-            System.out.println("Connected to server.");
-
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
-
-            SwingUtilities.invokeLater(Client::chessGUI);
-
-            chatGUI = new ChatGUI();
-
-            while(true){
-                try{
-                    Object input = in.readObject();
-                    handleInput(input);
-                } catch(ClassNotFoundException err){
-                    System.out.println("Error: Couldnt read from action input stream");
-                }
-            }
-        } catch (IOException err) {
-            System.out.println("I/O error creating socket: " + err.getMessage());
-        }
-    }
-
-    private static void handleInput(Object input){
-        if(input instanceof Tuple){
-            Tuple tuple = (Tuple) input;
-            FunctionFlag flag = tuple.getFunctionFlag();
-            switch(flag){
-                case DESTINATION:
-                    //drawPossibleMoves()
-                    break;
-                case SOURCE:
-                    //enableSquares
-                    break;
-                case REPAINT:
-                    //update
-                    break;
-                default:
-                    //incorrect flag recieved ?
-                    break;
-            }
-            if(tuple.getGameOver())
-        }
-    }
-
-    private static void chessGUI() {
+    public GameView(int clientID, ObjectOutputStream out){
+        this.clientID = clientID;
+        this.out = out;
         JFrame frame = new JFrame("Chess Client");
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                // TODO
-            }
-        });
-
         JPanel mainPanel = new JPanel();
         mainPanel.setPreferredSize(new Dimension(750, 650));
         mainPanel.setBackground(new Color(192, 192, 192));
-
-        JPanel displayPanel = new JPanel(new GridLayout(1, 1));
-        displayPanel.setBackground(new Color(192, 192, 192));
-        displayPanel.setPreferredSize(new Dimension(400, 50));
 
         boardPanel = new JPanel(new GridLayout(10, 10));
         boardPanel.setBackground(new Color(192, 192, 192));
         generateChessBoard();
         mainPanel.add(boardPanel);
 
-        ChessPieces chessPieces = new ChessPieces(boardSegment);
-
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setVisible(true);
     }
 
-    private static void generateChessBoard() {
+    private void generateChessBoard() {
         boardSegment = new JButton[8][8];
         for (int row = 0; row < 8; row++) {
             JLabel rowLabel = new JLabel(String.valueOf(Math.abs(row - 8)), JLabel.CENTER);
@@ -123,7 +58,7 @@ public class Client {
                     boardSegment[row][col].setBackground(new Color(119, 148, 86));
                 }
                 boardSegment[row][col].setPreferredSize(new Dimension(70, 70));
-                boardSegment[row][col].addActionListener(new ButtonClickListener(new int[] {row, col}));
+                boardSegment[row][col].addActionListener(new ButtonClickListener(row, col, this, out));
                 boardPanel.add(boardSegment[row][col]);
             }
         }
@@ -152,6 +87,10 @@ public class Client {
 
     public String getCurrentLabel(int row, int col) {
         return boardSegment[row][col].getText();
+    }
+
+    public int getClientID() {
+        return clientID;
     }
 
     public void drawPossibleMoves(ArrayList<int[]> enabledSquares) {
@@ -193,8 +132,8 @@ public class Client {
             }
         }
     }
-/*
-    public void update() {
+
+    public void update(ArrayList<int[]> pieces, ArrayList<String> unicodes) {
         // Erase board
         removeDots();
         for (JButton[] buttons : this.boardSegment) {
@@ -204,49 +143,51 @@ public class Client {
         }
 
         // Draw pieces on board
-        ArrayList<int[]> pieces = this.board.getPiecesLocation();
-        for (int[] piece : pieces) {
+        for (int i = 0; i < pieces.size(); i++) {
+            int[] piece = pieces.get(i);
             int row = piece[0];
             int col = piece[1];
-            String label = this.board.getChessPiece(row, col).getLabel();
-            this.boardSegment[row][col].setText(label);
+            String pieceUnicode = unicodes.get(i);
+            this.boardSegment[row][col].setText(pieceUnicode);
             this.boardSegment[row][col].setFont(new Font("Dialog", Font.PLAIN, 45));
         }
     }
-
+    /*
     public void displayWinner(String winner) {
         this.disableBoard();
         this.statusLabel.setText("The Winner Is: " + winner);
         this.statusLabel.setFont(new Font("Dialog", Font.BOLD, 20));
     }
-
+    
     public void promptNewPiece() {
         ConvertPawn convertPanel = new ConvertPawn(this.controller.getCurrentPlayer(), this.controller);
     }
     */
+}   class ButtonClickListener implements ActionListener {
+    private int row;
+    private int col;
+    private GameView gameView;
+    private ObjectOutputStream out;
 
-    static class ButtonClickListener implements ActionListener {
-        private int[] buttonValue;
+    public ButtonClickListener(int row, int col, GameView gameView, ObjectOutputStream out) {
+        this.gameView = gameView;
+        this.row = row;
+        this.col = col;
+        this.out = out;
+    }
 
-        public ButtonClickListener(int[] buttonValue) {
-            this.buttonValue = buttonValue;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent event) {
-            try {
-
-                Move move = new Move(buttonValue[0], buttonValue[1], clientPort);
-                System.out.println("Row: " + buttonValue[0] + "Col: " + buttonValue[1] + "Client Port Num: " + clientPort);
-
-                // Serialize complex data to bytes
-                out.writeObject(move);
-
-                System.out.println("Data sent");
-
-            } catch (IOException err) {
-                System.out.println("I/O error: " + err.getMessage());
-            }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try{
+            // Delegate handling of user input to the client
+            int clientID = gameView.getClientID();
+            System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
+            Move move = new Move(row, col, clientID);
+            // Serialize complex data to bytes
+            out.writeObject(move);
+            System.out.println("Data sent");
+        } catch (IOException err) {
+            System.out.println("I/O error: " + err.getMessage());
         }
     }
 }
