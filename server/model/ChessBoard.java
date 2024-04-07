@@ -3,11 +3,10 @@ package server.model;
 import java.util.ArrayList;
 import java.io.Serializable;
 import server.model.ChessPieces.*;
-import server.GameInterface;
 import server.GameObserver;
 import server.UnicodeMap;
 
-public class ChessBoard implements GameInterface, Serializable
+public class ChessBoard implements Serializable
 {
     private ChessPiece[][] board;
     private transient ArrayList<GameObserver> observers;
@@ -201,7 +200,7 @@ public class ChessBoard implements GameInterface, Serializable
         piece.move(toRow, toCol);
         this.board[toRow][toCol] = piece;
        
-        this.notifyObservers();
+        // this.notifyObservers();
         return result;
     }
 
@@ -266,7 +265,7 @@ public class ChessBoard implements GameInterface, Serializable
             newPiece = new Knight(toRow, toCol, this, color);
         }
         this.board[toRow][toCol] = newPiece;
-        this.notifyObservers();
+        // this.notifyObservers();
     }
 
     /**
@@ -372,27 +371,5 @@ public class ChessBoard implements GameInterface, Serializable
         this.currentPlayer = color;
     }
 
-    // Functions for GameInterface.
-    public void register(GameObserver observer)
-    {
-        if (observers == null)
-        {
-            // Must be instantiated here or loading saved game fails
-            observers = new ArrayList<GameObserver>(); 
-        }
-       observers.add(observer);
-    }
 
-    public void unregister(GameObserver observer)
-    {
-       observers.remove(observer);
-    }
- 
-    public void notifyObservers()
-    {
-       for(GameObserver observer: observers)
-       {
-          observer.update();
-       }
-    }
 }
