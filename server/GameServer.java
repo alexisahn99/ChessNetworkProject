@@ -5,8 +5,8 @@ import java.net.*;
 import java.util.*;
 
 import client.GameClient;
-import server.controller.Tuple;
 import server.model.ChessPieces.ChessPieceColor;
+import utility.Tuple;
 
 public class GameServer {
     private int port;

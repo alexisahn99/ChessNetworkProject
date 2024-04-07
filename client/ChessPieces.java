@@ -2,7 +2,8 @@ package client;
 
 import java.awt.*;
 import javax.swing.*;
-import client.UnicodeMap;
+
+import utility.UnicodeMap;
 
 public class ChessPieces 
 {

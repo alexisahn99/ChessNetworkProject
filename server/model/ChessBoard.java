@@ -3,13 +3,11 @@ package server.model;
 import java.util.ArrayList;
 import java.io.Serializable;
 import server.model.ChessPieces.*;
-import server.GameObserver;
-import server.UnicodeMap;
+import utility.UnicodeMap;
 
 public class ChessBoard implements Serializable
 {
     private ChessPiece[][] board;
-    private transient ArrayList<GameObserver> observers;
     private ChessPieceColor currentPlayer;
     private int clickCount;
     private ArrayList<ChessPiece> captured;

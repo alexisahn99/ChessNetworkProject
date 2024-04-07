@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import server.model.ChessBoard;
 import server.model.ChessPieces.ChessPiece;
 import server.model.ChessPieces.ChessPieceColor;
+import utility.FunctionFlag;
+import utility.Tuple;
 
 // TODO: removing pawn at the end option for now in selectDestination()
 // TODO: when REPAINT we need to send info of what piece is where
