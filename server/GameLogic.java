@@ -6,7 +6,7 @@ import server.model.ChessPieces.*;
 
 
 public class GameLogic {
-    private Controller controller = new Controller(null);
+    private Controller controller = new Controller();
 
     public GameLogic() {}
 
