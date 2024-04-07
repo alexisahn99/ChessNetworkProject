@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import client.ChessPieces;
 import client.Chat;
+import client.UnicodeMap;
 import peer_to_peer.Connection;
 import peer_to_peer.Peer;
 import server.controller.FunctionFlag;

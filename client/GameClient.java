@@ -60,7 +60,7 @@ public class GameClient {
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
-            if(!tuple.getFunctionSuccess()){
+            if(!tuple.getGameOver()){
                 switch(flag){
                     case DESTINATION:
                         //Outline all possible moves for player
@@ -79,12 +79,9 @@ public class GameClient {
                         //incorrect flag recieved ?
                         break;
                 }
-                if(tuple.getGameOver()){
-                    //TODO
-                }
             }
             else{
-                System.out.println("ERROR: UNSUCCESSFUL FUNCTION");
+                //TODO: Handle Game Over Here
             }
         }
     }
