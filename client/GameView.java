@@ -1,20 +1,12 @@
 package client;
 
 import java.io.*;
-import java.net.*;
 import java.util.ArrayList;
 import javax.swing.*;
-
-import client.ChessPieces;
-import client.Chat;
-import client.UnicodeMap;
-import peer_to_peer.Connection;
-import peer_to_peer.Peer;
-import server.controller.FunctionFlag;
-import server.controller.Tuple;
-import server.model.Move;
 import java.awt.*;
 import java.awt.event.*;
+
+import utility.Move;
 
 public class GameView {
     private static JPanel boardPanel;

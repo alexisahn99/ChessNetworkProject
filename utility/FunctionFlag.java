@@ -1,4 +1,4 @@
-package server.controller;
+package utility;
 /*
  * This class defines the flags that will be used to communicate 
  * between View - [ Client - Server ] - Controller

@@ -1,7 +1,8 @@
-package server.controller;
+package utility;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
 import server.model.ChessPieces.ChessPieceColor;
 
 public class Tuple implements Serializable {
