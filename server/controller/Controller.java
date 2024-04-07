@@ -68,7 +68,7 @@ public class Controller {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
         boolean isValidMove = false;
         ArrayList<int[]> allCurrentPieces = null;
-        ArrayList<String> allCurrentPieceUnicodes = null;
+        ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
         boolean isGameOver = false;
 
         // 1. Determine whether it is a legal destination
