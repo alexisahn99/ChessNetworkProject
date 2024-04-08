@@ -3,10 +3,10 @@ package server;
 import java.io.*;
 import java.net.*;
 
-import server.controller.*;
 import server.model.ChessPieces.*;
 import utility.Move;
 import utility.Tuple;
+import utility.FunctionFlag;
  
 /**
  * This thread handles connection for each connected client, so the server

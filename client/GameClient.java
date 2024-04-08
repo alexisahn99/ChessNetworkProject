@@ -31,7 +31,7 @@ public class GameClient {
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            clientID = 10; //Hardcoded for now
+            clientID = 10; //TODO: Hardcoded for now
             gameView = new GameView(clientID, out);
 
             while(true){
@@ -39,7 +39,7 @@ public class GameClient {
                     Object input = in.readObject();
                     handleInput(input);
                 } catch(ClassNotFoundException err){
-                    System.out.println("Error: Couldnt read from action input stream");
+                    System.out.println("Error: Couldn't read from action input stream");
                 }
             }
         } catch (IOException err) {
@@ -49,6 +49,7 @@ public class GameClient {
 
     private static void handleInput(Object input){
         if(input instanceof Tuple){
+            
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
