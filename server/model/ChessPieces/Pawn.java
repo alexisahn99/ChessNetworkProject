@@ -1,7 +1,7 @@
 package server.model.ChessPieces;
 
 import server.model.ChessBoard;
-import server.UnicodeMap;
+import utility.UnicodeMap;
 
 import java.util.ArrayList;
 

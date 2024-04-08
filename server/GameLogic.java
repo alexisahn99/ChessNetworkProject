@@ -1,8 +1,9 @@
 package server;
 
-import server.model.Move;
 import server.controller.*;
 import server.model.ChessPieces.*;
+import utility.Move;
+import utility.Tuple;
 
 
 public class GameLogic {

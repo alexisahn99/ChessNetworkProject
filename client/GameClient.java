@@ -3,18 +3,10 @@ package client;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import javax.swing.*;
 
-import client.ChessPieces;
-import client.Chat;
-import client.GameView;
-import peer_to_peer.Connection;
-import peer_to_peer.Peer;
-import server.controller.FunctionFlag;
-import server.controller.Tuple;
-import server.model.Move;
-import java.awt.*;
-import java.awt.event.*;
+import utility.FunctionFlag;
+import utility.Tuple;
+
 
 public class GameClient {
     private static ObjectOutputStream out;
@@ -60,7 +52,7 @@ public class GameClient {
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
-            if(!tuple.getFunctionSuccess()){
+            if(!tuple.getGameOver()){
                 switch(flag){
                     case DESTINATION:
                         //Outline all possible moves for player
@@ -79,12 +71,9 @@ public class GameClient {
                         //incorrect flag recieved ?
                         break;
                 }
-                if(tuple.getGameOver()){
-                    //TODO
-                }
             }
             else{
-                System.out.println("ERROR: UNSUCCESSFUL FUNCTION");
+                //TODO: Handle Game Over Here
             }
         }
     }
