@@ -21,7 +21,7 @@ public class GameLogic {
             moveResponse.setCentralPortNum(centralPortNum);
             
             if (playerColor != moveResponse.getCurrentPlayerColor()) {
-                // Logic to repaint the board
+                playerColor = moveResponse.getCurrentPlayerColor();
             }
             
             return moveResponse;
