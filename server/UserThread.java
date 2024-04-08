@@ -49,7 +49,8 @@ public class UserThread extends Thread {
                     
                     Tuple logicCheck = gameLogic.checkMove(playerColor, curMove, server.getCentralPortNum());
 
-                    if(logicCheck != null) {
+                    if(logicCheck != null && logicCheck.getFunctionFlag() == FunctionFlag.REPAINT) {
+                        // Repaint the board. 
                         server.broadcast(logicCheck, this);
                     }                 
 
