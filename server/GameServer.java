@@ -22,12 +22,12 @@ public class GameServer {
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
  
-            System.out.println("Game Server is listening on port " + port);
+            System.out.println("Game Server: listening on port " + port);
  
             while (true) {
             
                 Socket socket = serverSocket.accept();
-                System.out.println("New user connected");
+                System.out.println("Game Server: New user connected");
 
                 userNum++;
                 GameLogic gameLogic = new GameLogic();
@@ -45,7 +45,7 @@ public class GameServer {
             }
  
         } catch (IOException ex) {
-            System.out.println("Error in the server: " + ex.getMessage());
+            System.out.println("ERROR in Game Server: error in the server: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -69,13 +69,13 @@ public class GameServer {
         // Connect to the head server
         try  {
             Socket clientSocket = new Socket(hostname, headport);
-            System.out.println("Connected to head server.");
+            System.out.println("Game Server: Connected to head server.");
             out = clientSocket.getOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);
             dataOut.writeUTF("Server");
 
         } catch (IOException err) {
-            System.out.println("I/O error creating socket with head server: " + err.getMessage());
+            System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
         }
 
         // Create the game server and run it
@@ -86,20 +86,17 @@ public class GameServer {
     /**
      * Delivers data from one user to others (broadcasting)
      */
-    void broadcast(Tuple result, UserThread excludeUser) {
+    public void broadcast(Tuple result, UserThread excludeUser) {
         for (UserThread aUser : userThreads) {
-            if (aUser != excludeUser) {
                 aUser.sendMove(result);
             }
-        }
-
     }
 
-    void setCentralPortNum(int portNum) {
+    public void setCentralPortNum(int portNum) {
         centralPortNum = portNum;
     }
 
-    int getCentralPortNum() {
+    public int getCentralPortNum() {
         return centralPortNum;
     }
 }
