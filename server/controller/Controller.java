@@ -42,11 +42,20 @@ public class Controller {
         {
             return this.selectPiece(row, col, portNum);
         }
+        else if (clickCount == 0) {
+            return this.selectPlayer();
+        }
         else 
         {
             this.board.setClickCount(0); // if invalidMove, you reset selecting a piece. else, validMove
             return this.selectDestination(row, col, portNum);
         }
+    }
+
+    public Tuple selectPlayer() {
+        FunctionFlag functionFlag = FunctionFlag.SOURCE;
+        ArrayList<int[]> movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
+        return new Tuple(functionFlag, true, movableSquares, null, false, this.getCurrentPlayer(), 0);
     }
 
     public Tuple selectPiece(int fromRow, int fromCol, int portNum)
@@ -63,8 +72,7 @@ public class Controller {
         {
             this.board.setClickCount(0);
             isValidMove = false;
-            functionFlag = FunctionFlag.SOURCE;
-            movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
+            return this.selectPlayer();
         }
         
         return new Tuple(functionFlag, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);

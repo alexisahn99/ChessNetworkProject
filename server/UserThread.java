@@ -52,7 +52,10 @@ public class UserThread extends Thread {
                     else {
                         if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
                             // end of turn, everybody needs to repaint
-                            server.broadcast(tuple);
+                            server.broadcast(tuple, tuple.getCurrentPlayerColor());
+                            // your turn is over, disable the board
+                            Tuple temp = new Tuple(FunctionFlag.DISABLE, isDaemon(), null, null, isAlive(), playerColor, 0);
+                            this.sendMove(temp);
                         } else {
                             // YOUR turn is not over yet
                             this.sendMove(tuple);
@@ -87,6 +90,10 @@ public class UserThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ChessPieceColor getPlayerColor() {
+        return this.playerColor;
     }
 
     public void setPlayerColor(ChessPieceColor color) {

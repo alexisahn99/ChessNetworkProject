@@ -5,6 +5,7 @@ package utility;
 */
 
 public enum FunctionFlag {
+    DISABLE("disable the board"), // this.view.drawPossibleMoves(movableSquares);
     DESTINATION("moveable squares"), // this.view.drawPossibleMoves(movableSquares);
     SOURCE("current pieces"), // this.view.enableSquares(allCurrentPieces);
     REPAINT("end of turn"); // this.view.update() 

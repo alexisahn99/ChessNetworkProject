@@ -69,7 +69,7 @@ public class GameView {
         panel.add(new JLabel(""));
     }
 
-    private void disableBoard() {
+    public void disableBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 boardSegment[row][col].setEnabled(false);

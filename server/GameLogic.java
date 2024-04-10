@@ -8,21 +8,18 @@ import utility.Tuple;
 
 public class GameLogic {
     private Controller controller;
+    private ChessPieceColor currentPlayer;
 
     public GameLogic() {
         this.controller = new Controller();
     }
 
-    Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
+    public Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
 
         if (playerColor == controller.getCurrentPlayer()) {
-
             System.out.println("Data read");
-
-            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum()); 
-
+            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum());
             moveResponse.setCentralPortNum(centralPortNum);
-            
             return moveResponse;
         }
         else {
@@ -30,4 +27,9 @@ public class GameLogic {
         }
     
     }
+
+    public Tuple currentPlayerPieces() {
+        return controller.selectPlayer();
+    }
+    
 }

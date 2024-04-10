@@ -90,9 +90,13 @@ public class GameServer {
     /**
      * Delivers data from one user to others (broadcasting)
      */
-    public void broadcast(Tuple result) {
+    public void broadcast(Tuple result, ChessPieceColor playerColor) {
         for (UserThread aUser : userThreads) {
                 aUser.sendMove(result);
+                if(aUser.getPlayerColor() == playerColor) {
+                    // enable your squares
+                    aUser.sendMove(this.gameLogic.currentPlayerPieces());
+                }
             }
     }
 

@@ -68,6 +68,9 @@ public class GameClient {
                         ArrayList<String> unicodes = tuple.getChessPieceUnicode();
                         gameView.update(pieceLocations, unicodes);
                         break;
+                    case DISABLE:
+                        gameView.disableBoard();
+                        break;
                     default:
                         //incorrect flag recieved ?
                         break;
