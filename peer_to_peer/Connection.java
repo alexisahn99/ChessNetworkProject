@@ -3,9 +3,12 @@ package peer_to_peer;
 import java.io.*;
 import java.net.*;
 
+import client.P2PGUI;
+
 public class Connection implements Runnable {
     private final Socket socket;
     private final Peer peer;
+    private P2PGUI gui;
     private PrintWriter out;
     private BufferedReader in;
 
@@ -26,7 +29,8 @@ public class Connection implements Runnable {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 // Updated to pass 'this' as the source connection
-                peer.receiveMessage(inputLine, this);
+                gui.displayData();
+                //peer.receiveMessage(inputLine, this);
             }
         } catch (IOException e) {
             close();

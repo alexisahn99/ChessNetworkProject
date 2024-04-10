@@ -1,5 +1,6 @@
 package peer_to_peer;
 
+import client.P2PGUI;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -8,6 +9,7 @@ public class Peer {
     private final int port;
     private final Set<Connection> connections = Collections.synchronizedSet(new HashSet<>());
     private ServerSocket serverSocket;
+    private P2PGUI gui;
 
     public Peer(int port) {
         this.port = port;
@@ -19,7 +21,7 @@ public class Peer {
             System.out.println("Peer started on port " + port);
 
             new Thread(this::acceptConnections).start();
-            new Thread(this::handleUserInput).start();
+            //new Thread(this::handleUserInput).start();
 
         } catch (IOException e) {
             e.printStackTrace();
