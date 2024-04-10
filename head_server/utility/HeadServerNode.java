@@ -7,12 +7,14 @@ public class HeadServerNode {
     private int portNumber;
     private ArrayList<GameServerNode> gameServers;
     private ArrayList<PlayerNode> players;
+    private int serverPortNum;
 
     public HeadServerNode() {
         this.portNumber = 32156;
         IDManagement.addPortNumber(this.portNumber);
         this.gameServers = new ArrayList<>();
         this.players = new ArrayList<>();
+        this.serverPortNum = 32157; // Used for finding unused port number
     }
 
     public int getPortNumber() {
@@ -25,6 +27,16 @@ public class HeadServerNode {
         return gameServers;
     }
 
+/* This function finds and returns an unused port number */
+    public int findPortNum() {
+        int serverPort = this.serverPortNum;
+        while(IDManagement.allPortNumber.contains(serverPort))
+        {
+            serverPort ++;
+        }
+        return serverPort;
+    }
+/*
     public boolean addGameServer(GameServerNode server) {
         if (IDManagement.addPortNumber(server.getPortNumber())) {
             this.gameServers.add(server);
@@ -32,6 +44,9 @@ public class HeadServerNode {
         } else {
             return false; // Server Port Number is a duplicate and was not added
         }
+    } */
+    public void addGameServer(GameServerNode server) {
+        this.gameServers.add(server);
     }
 
     public GameServerNode findGameServerByPort(int portNumber) {
