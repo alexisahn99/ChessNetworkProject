@@ -76,8 +76,11 @@ public class GameClient {
                         break;
                 }
             }
-            else{
+            else {
                 //TODO: Handle Game Over Here
+                // 1. display current player color
+                // 2. is check
+                // 3. is game over, who is winner?
             }
         }
     }
