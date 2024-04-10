@@ -53,16 +53,21 @@ public class Controller {
     // This function always returns movableSquares that a piece can move to. 
     // It may also return an empty movable squares. 
     {
+        FunctionFlag functionFlag = FunctionFlag.DESTINATION;
         boolean isValidMove = true;
         this.currentChessPiece = this.board.getChessPiece(fromRow, fromCol);
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
+        
+        // if you click a piece that you cannot move
         if (movableSquares.size() == 0)
         {
             this.board.setClickCount(0);
             isValidMove = false;
+            functionFlag = FunctionFlag.SOURCE;
+            movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
         }
         
-        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);
+        return new Tuple(functionFlag, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);
     }
 
     public Tuple selectDestination(int toRow, int toCol, int portNum)
