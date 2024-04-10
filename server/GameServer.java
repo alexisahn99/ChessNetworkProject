@@ -90,7 +90,7 @@ public class GameServer {
     /**
      * Delivers data from one user to others (broadcasting)
      */
-    public void broadcast(Tuple result, UserThread excludeUser) {
+    public void broadcast(Tuple result) {
         for (UserThread aUser : userThreads) {
                 aUser.sendMove(result);
             }

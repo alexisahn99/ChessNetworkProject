@@ -23,10 +23,6 @@ public class GameLogic {
 
             moveResponse.setCentralPortNum(centralPortNum);
             
-            // if (playerColor != moveResponse.getCurrentPlayerColor()) {
-            //     playerColor = moveResponse.getCurrentPlayerColor();
-            // }
-            
             return moveResponse;
         }
         else {

@@ -46,12 +46,19 @@ public class UserThread extends Thread {
                     
                     Tuple tuple = gameLogic.checkMove(playerColor, curMove, server.getCentralPortNum());
 
-                    if(tuple != null && tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
-                        // Repaint the board. 
-                        server.broadcast(tuple, this);
-                    } else if (tuple != null) {
-                        this.sendMove(tuple);
-                    }                 
+                    if (tuple == null) {
+                        // do nothing, wrong turn
+                    }
+                    else {
+                        if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
+                            // end of turn, everybody needs to repaint
+                            server.broadcast(tuple);
+                        } else {
+                            // YOUR turn is not over yet
+                            this.sendMove(tuple);
+                        }
+                    }
+                                
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
