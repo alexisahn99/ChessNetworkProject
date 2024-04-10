@@ -83,11 +83,11 @@ public class UserThread extends Thread {
     }
 
     public void setPlayerColor(ChessPieceColor color) {
-        playerColor = color;
+        this.playerColor = color;
         System.out.println("UserThread: Player pieces set to "+ color.toString());
     }
 
     public int getPortNumber() {
-        return playerPortNumber;
+        return this.playerPortNumber;
     }
 }

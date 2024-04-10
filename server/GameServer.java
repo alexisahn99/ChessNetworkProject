@@ -10,13 +10,18 @@ import utility.Tuple;
 
 public class GameServer {
     private int port;
-    private Set<UserThread> userThreads = new HashSet<>();
-    private int userNum = 0;
-    private int centralPortNum = 0;
+    private Set<UserThread> userThreads;
+    private int userNum;
+    private int centralPortNum;
     private static OutputStream out;
+    private GameLogic gameLogic;
  
     public GameServer(int port) {
         this.port = port;
+        this.userThreads = new HashSet<>();
+        this.userNum = 0;
+        this.centralPortNum = 0;
+        this.gameLogic = new GameLogic();
     }
  
     public void execute() {
@@ -30,8 +35,7 @@ public class GameServer {
                 System.out.println("Game Server: New user connected");
 
                 userNum++;
-                GameLogic gameLogic = new GameLogic();
-                UserThread newUser = new UserThread(socket, this, gameLogic);
+                UserThread newUser = new UserThread(socket, this, this.gameLogic);
                 userThreads.add(newUser);
                 if (userNum == 1) {
                     newUser.setPlayerColor(ChessPieceColor.W);

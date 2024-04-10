@@ -7,9 +7,11 @@ import utility.Tuple;
 
 
 public class GameLogic {
-    private Controller controller = new Controller();
+    private Controller controller;
 
-    public GameLogic() {}
+    public GameLogic() {
+        this.controller = new Controller();
+    }
 
     Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
 
@@ -21,12 +23,15 @@ public class GameLogic {
 
             moveResponse.setCentralPortNum(centralPortNum);
             
-            if (playerColor != moveResponse.getCurrentPlayerColor()) {
-                playerColor = moveResponse.getCurrentPlayerColor();
-            }
+            // if (playerColor != moveResponse.getCurrentPlayerColor()) {
+            //     playerColor = moveResponse.getCurrentPlayerColor();
+            // }
             
             return moveResponse;
         }
-        return null;
+        else {
+            return null;
+        }
+    
     }
 }
