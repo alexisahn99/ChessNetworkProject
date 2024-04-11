@@ -27,7 +27,7 @@ public class GameClient {
 
         try {
             Socket clientSocket = new Socket(hostname, port);
-            System.out.println("Connected to server.");
+            // System.out.println("Connected to server.");
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
@@ -39,11 +39,11 @@ public class GameClient {
                     Object input = in.readObject();
                     handleInput(input);
                 } catch(ClassNotFoundException err){
-                    System.out.println("Error: Couldn't read from action input stream");
+                    System.out.println("ERROR in GameClient: Couldn't read from action input stream");
                 }
             }
         } catch (IOException err) {
-            System.out.println("I/O error creating socket: " + err.getMessage());
+            System.out.println("ERROR in GameClient: I/O error creating socket - " + err.getMessage());
         }
     }
 
@@ -53,7 +53,7 @@ public class GameClient {
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
-            if(!tuple.getGameOver()){
+            if(!tuple.isCheckMate()){
                 switch(flag){
                     case DESTINATION:
                         //Outline all possible moves for player
@@ -77,7 +77,7 @@ public class GameClient {
                 }
             }
             else {
-                //TODO: Handle Game Over Here
+                //TODO: Handle Game Over (CHECK MATE) Here
                 // 1. display current player color
                 // 2. is check
                 // 3. is game over, who is winner?

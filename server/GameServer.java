@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import client.GameClient;
 import server.model.ChessPieces.ChessPieceColor;
 import utility.Tuple;
 
@@ -27,12 +26,12 @@ public class GameServer {
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
  
-            System.out.println("Game Server: listening on port " + port);
+            // System.out.println("GameServer: listening on port " + port);
  
             while (true) {
             
                 Socket socket = serverSocket.accept();
-                System.out.println("Game Server: New user connected");
+                // System.out.println("GameServer: New user connected");
 
                 userNum++;
                 UserThread newUser = new UserThread(socket, this, this.gameLogic);
@@ -73,13 +72,13 @@ public class GameServer {
         // Connect to the head server
         try  {
             Socket clientSocket = new Socket(hostname, headport);
-            System.out.println("Game Server: Connected to head server.");
+            // System.out.println("GameServer: Connected to head server.");
             out = clientSocket.getOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);
             dataOut.writeUTF("Server");
 
         } catch (IOException err) {
-            System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
+            System.out.println("ERROR in GameServer: I/O error creating socket with head server: " + err.getMessage());
         }
 
         // Create the game server and run it

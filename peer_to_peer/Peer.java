@@ -16,7 +16,7 @@ public class Peer {
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Peer started on port " + port);
+            // System.out.println("Peer: started on port " + port);
 
             new Thread(this::acceptConnections).start();
             new Thread(this::handleUserInput).start();

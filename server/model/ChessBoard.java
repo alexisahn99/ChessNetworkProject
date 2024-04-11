@@ -157,6 +157,34 @@ public class ChessBoard implements Serializable
         return result;
     }
 
+    public boolean isCheck() {
+        King currentKing;
+        // Determine which king to check based on the current player's color
+        if (this.currentPlayer == ChessPieceColor.B) {
+            currentKing = bKing;
+        } else {
+            currentKing = wKing;
+        }
+    
+        // Determine the opponent's color
+        ChessPieceColor opponentColor = (this.currentPlayer == ChessPieceColor.B) ? ChessPieceColor.W : ChessPieceColor.B;
+    
+        // Get all possible moves for the opponent
+        ArrayList<int[]> opponentMovableSquares = this.getAllMovableSquares(opponentColor);
+    
+        // Check if any of the opponent's moves can capture the king
+        for (int[] move : opponentMovableSquares) {
+            if (move[0] == currentKing.getCurrentRow() && move[1] == currentKing.getCurrentCol()) {
+                // The king is in check if an opponent's move can capture it
+                return true;
+            }
+        }
+    
+        // If none of the opponent's moves can capture the king, it's not in check
+        return false;
+    }
+    
+
     // Reset Pawns' ability to En Passant.
     public void resetEnPassant()
     {
@@ -203,7 +231,7 @@ public class ChessBoard implements Serializable
     }
 
     // Check for Checkmate.
-    public boolean isGameOver()
+    public boolean isCheckMate()
     {
         boolean result = false;
         ArrayList<int[]> finalResult = new ArrayList<int[]>();

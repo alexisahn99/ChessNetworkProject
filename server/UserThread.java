@@ -28,10 +28,10 @@ public class UserThread extends Thread {
  
     public void run() {
         try {
-            System.out.println("UserThread: Running");
+            // System.out.println("UserThread: Running");
             out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            System.out.println("UserThread: Input and Output streams setup");
+            // System.out.println("UserThread: Input and Output streams setup");
   
             while(true) {
                 try {
@@ -44,7 +44,7 @@ public class UserThread extends Thread {
                         server.setCentralPortNum(playerPortNumber);
                     }
                     
-                    Tuple tuple = gameLogic.checkMove(playerColor, curMove, server.getCentralPortNum());
+                    Tuple tuple = gameLogic.checkMove(playerColor, curMove, playerPortNumber);
 
                     if (tuple == null) {
                         // do nothing, wrong turn
@@ -52,9 +52,10 @@ public class UserThread extends Thread {
                     else {
                         if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
                             // end of turn, everybody needs to repaint
-                            server.broadcast(tuple, tuple.getCurrentPlayerColor());
+                            ChessPieceColor currentPlayerColor = tuple.getCurrentPlayerColor();
+                            server.broadcast(tuple, currentPlayerColor);
                             // your turn is over, disable the board
-                            Tuple temp = new Tuple(FunctionFlag.DISABLE, isDaemon(), null, null, false, playerColor, 0);
+                            Tuple temp = new Tuple(FunctionFlag.DISABLE, null, null, gameLogic.isCheck(), gameLogic.isCheckMate(), currentPlayerColor, playerPortNumber);
                             this.sendMove(temp);
                         } else {
                             // YOUR turn is not over yet
@@ -98,7 +99,7 @@ public class UserThread extends Thread {
 
     public void setPlayerColor(ChessPieceColor color) {
         this.playerColor = color;
-        System.out.println("UserThread: Player pieces set to "+ color.toString());
+        // System.out.println("UserThread: Player pieces set to "+ color.toString());
     }
 
     public int getPortNumber() {

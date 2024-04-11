@@ -17,7 +17,7 @@ public class GameLogic {
     public Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
 
         if (playerColor == controller.getCurrentPlayer()) {
-            System.out.println("Data read");
+            // System.out.println("GameLogic: Data read");
             Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum());
             moveResponse.setCentralPortNum(centralPortNum);
             return moveResponse;
@@ -30,6 +30,14 @@ public class GameLogic {
 
     public Tuple currentPlayerPieces() {
         return controller.selectPlayer();
+    }
+
+    public boolean isCheck() {
+        return controller.isCheck();
+    }
+
+    public boolean isCheckMate() {
+        return controller.isCheckMate();
     }
     
 }

@@ -55,15 +55,11 @@ public class Controller {
     public Tuple selectPlayer() {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
         ArrayList<int[]> movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
-        return new Tuple(functionFlag, true, movableSquares, null, false, this.getCurrentPlayer(), 0);
+        return new Tuple(functionFlag, movableSquares, null, false, false, this.getCurrentPlayer(), 0);
     }
 
-    public Tuple selectPiece(int fromRow, int fromCol, int portNum)
-    // This function always returns movableSquares that a piece can move to. 
-    // It may also return an empty movable squares. 
-    {
+    public Tuple selectPiece(int fromRow, int fromCol, int portNum) {
         FunctionFlag functionFlag = FunctionFlag.DESTINATION;
-        boolean isValidMove = true;
         this.currentChessPiece = this.board.getChessPiece(fromRow, fromCol);
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
         
@@ -71,27 +67,27 @@ public class Controller {
         if (movableSquares.size() == 0)
         {
             this.board.setClickCount(0);
-            isValidMove = false;
             return this.selectPlayer();
         }
+        else {
+            return new Tuple(functionFlag, movableSquares, null, false, false, this.getCurrentPlayer(), portNum);
+        }
         
-        return new Tuple(functionFlag, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);
     }
 
     public Tuple selectDestination(int toRow, int toCol, int portNum)
     {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
-        boolean isValidMove = false;
         ArrayList<int[]> allCurrentPieces = null;
         ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
-        boolean isGameOver = false;
+        boolean isCheck = false;
+        boolean isCheckMate = false;
 
         // 1. Determine whether it is a legal destination
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
         for (int[] square : movableSquares) {
             if (square[0] == toRow && square[1] == toCol) {
                 // 1-1. Move is valid, so we return a tuple indicating this
-                isValidMove = true;
                 this.board.placeChessPiece(toRow, toCol, this.currentChessPiece);
                 this.switchPlayers();
                 functionFlag = FunctionFlag.REPAINT;
@@ -100,13 +96,14 @@ public class Controller {
         // 1-2. If no valid move was found, we consider the move invalid
 
         // 2. Check for game over
-        if (this.board.isGameOver()) 
+        isCheckMate = this.board.isCheckMate();
+        if (isCheckMate) 
         {
-            // System.out.println("Game over!");
-            isGameOver = true;
+            // Game over
         }
         else
         {
+            isCheck = this.board.isCheck();
             allCurrentPieces = this.board.getPiecesLocation();
             for (int[] piece : allCurrentPieces) {
                 int row = piece[0];
@@ -116,7 +113,15 @@ public class Controller {
             }
         }
 
-        return new Tuple(functionFlag, isValidMove, allCurrentPieces, allCurrentPieceUnicodes, isGameOver, this.getCurrentPlayer(), portNum);
+        return new Tuple(functionFlag, allCurrentPieces, allCurrentPieceUnicodes, isCheck, isCheckMate, this.getCurrentPlayer(), portNum);
+    }
+
+    public boolean isCheck() {
+        return this.board.isCheck();
+    }
+
+    public boolean isCheckMate() {
+        return this.board.isCheckMate();
     }
 
     // TODO: never used

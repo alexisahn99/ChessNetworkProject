@@ -175,13 +175,13 @@ public class GameView {
         try{
             // Delegate handling of user input to the client
             int clientID = gameView.getClientID();
-            System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
+            // System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
             Move move = new Move(row, col, clientID);
             // Serialize complex data to bytes
             out.writeObject(move);
-            System.out.println("Data sent");
+            // System.out.println("Data sent");
         } catch (IOException err) {
-            System.out.println("I/O error: " + err.getMessage());
+            System.out.println("ERROR in GameView: I/O error - " + err.getMessage());
         }
     }
 }

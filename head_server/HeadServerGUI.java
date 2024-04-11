@@ -18,7 +18,7 @@ public class HeadServerGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Add action here when the button is clicked
                 // For example: open a new window for the game
-                System.out.println("Join Game button clicked");
+                // System.out.println("Join Game button clicked");
             }
         });
         mainPanel.add(joinGameButton);
