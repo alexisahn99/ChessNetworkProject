@@ -219,3 +219,169 @@ public class HeadServer implements Runnable
         server.run();
     }
 }
+
+/* This function shuts down the head server */
+    public void shutdown() 
+    {
+        try
+        {
+            done = true;
+            pool.shutdown();
+            if (!server.isClosed()) 
+            {
+                server.close();
+            }
+
+            for (ConnectionHandler ch : connections)
+            {
+                ch.shutdown();
+            }
+        }
+        catch (IOException e)
+        {
+
+        }
+    }
+
+
+
+    class ConnectionHandler implements Runnable
+    {
+        private Socket client;
+        private String whichClient;
+        private BufferedReader in;
+        private PrintWriter out;
+        private String playerID;
+        private PlayerNode playerNode;
+
+        public ConnectionHandler (Socket client)
+        {
+            this.client = client;
+
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                out = new PrintWriter(client.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                whichClient = in.readLine(); /* After connection, client or server will immediately send string of "server" or "client"
+                                                so headServer knows which one to handle */
+
+                System.out.println(whichClient + " connected"); // Prints to HeadServer terminal if server or client connected
+
+                /***** HANDLES SERVER *****/
+                if (whichClient.startsWith("server")) 
+                {
+                    int gameServerPort = headServerNode.findPortNum(); // Finds open port
+                    GameServerNode gameServerNode = new GameServerNode(gameServerPort);
+                    headServerNode.addGameServer(gameServerNode); // Adds gameServerNode to headServerNode gameServers array list
+
+                    while (!done)
+                    {
+                        // Need to add logic to end the game server when the game ends
+                    }
+                }
+
+                /***** HANDLES CLIENT *****/
+                else if (whichClient.startsWith("client")) 
+                {
+                    out.println("Please enter a nickname: "); // Player will be prompted to enter their nickname (playerID)
+                    String playerID = in.readLine();
+
+                    // While loop checks if playerID is already in use and accepts another ID
+                    while (IDManagement.addClientIDs.contains(playerID)) {
+                        out.println("Nickname is already in use. Enter another nickname: ");
+                        playerID = in.readLine();
+                    }
+
+                    int playerPortNum = headServerNode.findPortNum(); // Finds Port number for client (Used in P2P)
+                    PlayerNode playerNode = new PlayerNode(playerID, playerPortNum);
+                    headServerNode.addPlayer(playerNode); // Player Node is added to headServerNode players array list
+
+                    System.out.println(playerID + " connected"); // Prints to HeadServer terminal the playerID which connected
+
+                    // For loop prints out the port numbers of all available game servers so player can see what are available
+                    // This will need to be changed when GUI is created
+                    for (GameServerNode gameServer : headServerNode.getAllGameServers()) {
+                        out.println(gameServer.getPortNumber());
+                    }
+
+                    String message;
+                    message = in.readLine();
+                    boolean findPort = false;
+
+                    /* While loop accepts terminal input from player. If player enters "New Server", a game server is created and 
+                       the port number of the new server is sent to the client. The head server then immediately ends connection 
+                       with the client, and this thread ends. 
+
+                       If player enters one of the given port numbers, the player is sent the port number (so the client knows it
+                       can go to that port) and the head server ends connection with the client, and this thread ends. 
+
+                       This needs to be changed when GUI is created.
+                    */
+
+                    while (!findPort)
+                    {
+                        System.out.println(message);
+                        if (message.startsWith("New server")) {
+                            int newPortNum = headServerNode.findPortNum();
+                            GameServer gameServer = new GameServer(newPortNum);
+                            out.println(newPortNum);
+                            findPort = true;
+                            shutdown();
+                        }
+                        int portNum = Integer.parseInt(message);
+                        GameServerNode gameServer = headServerNode.findGameServerByPort(portNum);
+                        if (gameServer != null) {
+                            out.println(portNum);
+                            System.out.println("Connecting client to server with port number: " + message);
+                            findPort = true;
+                            shutdown();
+                        }
+                        
+                    }
+
+                }
+
+
+                
+            }
+            catch (IOException e)
+            {
+                shutdown();
+            }
+        }
+
+        public void sendMessage(String message)
+        {
+            out.println(message);
+        }
+
+        public void shutdown() 
+        {
+            try
+            {
+                done = true;
+                in.close();
+                out.close();
+                if (!client.isClosed())
+                {
+                    client.close();
+                }
+            }
+            catch (IOException e)
+            {
+
+            }
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        HeadServer server = new HeadServer(32156);
+        server.run();
+    }
+}
