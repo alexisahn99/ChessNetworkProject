@@ -15,23 +15,126 @@ public class GameClient {
     private static GameView gameView;
     private static int clientID;
 
-    public static void main(String[] args) {
-        /* 
-        if (args.length < 2) {
-            System.out.println("Usage: java TestClient <server IP> <port number>");
-            return;
-        }
-        */
-        String hostname = "127.0.0.1"; //args[0];
-        int port = 21001; // Integer.parseInt(args[1]);
+    private Socket client;
+    private BufferedReader headIn;
+    private PrintWriter headOut;
+    private boolean done;
+    private boolean newConnection;
+    private int portNum;
+    private String hostname;
+    private boolean notConnected;
 
+    public GameClient(String hostname, int portNum) {
+        done = false;
+        newConnection = false;
+        notConnected = false;
+        this.portNum = portNum;
+        this.hostname = hostname;
+    }
+
+    public void run()
+    {
+        try
+        {
+            client = new Socket(hostname, portNum);
+            headOut = new PrintWriter(client.getOutputStream(), true);
+            headIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+            while(!done) {
+                try
+            {
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+                headOut.println("client");
+
+                String serverMessage = headIn.readLine();
+                while(!serverMessage.equals("done")) {
+                    System.out.println(serverMessage);
+                    headOut.println(inReader.readLine());
+                    serverMessage = headIn.readLine();
+                }
+
+                serverMessage = headIn.readLine();
+                while (!serverMessage.equals("over")) {
+                    System.out.println(serverMessage);
+                    serverMessage = headIn.readLine();
+                }
+
+                String message;
+
+                while (!done)
+                {
+                    message = inReader.readLine();
+                    headOut.println(message);
+                    serverMessage = headIn.readLine();
+                    if (!serverMessage.equals("no")) {
+                        int portNum = Integer.parseInt(serverMessage);
+                        System.out.println("Moving to game server");
+                        transferToPort(portNum);
+                    }
+                    else {
+                        System.out.println("Incorrect entry. Enter port number or any letter for new server");
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                shutdown();
+            }
+
+            }
+        }
+        catch (IOException e)
+        {
+            shutdown();
+        }
+    }
+
+    public void shutdown()
+    {
+        try
+        {
+            done = true;
+            headIn.close();
+            headOut.close();
+            if (!client.isClosed())
+            {
+                client.close();
+            }
+        }
+        catch (IOException e)
+        {
+
+        }
+    }
+
+    public void transferToPort(int newPortNum)
+    {
+        try
+        {
+            done = true;
+            headIn.close();
+            headOut.close();
+            if (!client.isClosed())
+            {
+                client.close();
+            }
+            this.portNum = newPortNum;
+            runGame();
+        }
+        catch (IOException e)
+        {
+            shutdown();
+        }
+    }
+
+    public void runGame() {
         try {
-            Socket clientSocket = new Socket(hostname, port);
+            Socket clientSocket = new Socket(hostname, portNum);
             System.out.println("Connected to server.");
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            clientID = 10; //TODO: Hardcoded for now
+            clientID = 10; //TODO: Hardcoded for now    
             gameView = new GameView(clientID, out);
 
             while(true){
@@ -46,7 +149,7 @@ public class GameClient {
             System.out.println("I/O error creating socket: " + err.getMessage());
         }
     }
-
+    
     private static void handleInput(Object input){
         if(input instanceof Tuple){
             
@@ -77,5 +180,19 @@ public class GameClient {
                 //TODO: Handle Game Over Here
             }
         }
+    }
+
+    public static void main(String[] args) {
+        /* 
+        if (args.length < 2) {
+            System.out.println("Usage: java TestClient <server IP> <port number>");
+            return;
+        }
+        */
+        String hostname = "127.0.0.1"; //args[0];
+        int port = 32156; // Integer.parseInt(args[1]);
+
+        GameClient gameClient = new GameClient(hostname, port);
+        gameClient.run();
     }
 }
