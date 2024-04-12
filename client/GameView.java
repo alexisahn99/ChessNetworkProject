@@ -7,28 +7,42 @@ import java.awt.*;
 import java.awt.event.*;
 
 import utility.Move;
+import server.model.ChessPieces.ChessPieceColor;
 
 public class GameView {
     private static JPanel boardPanel;
     private static JButton[][] boardSegment;
+    private JFrame frame;
+    private JPanel mainPanel;
+    private JPanel displayPanel;
+    private JLabel statusLabel;
     private ObjectOutputStream out;
     private int clientID;
 
     public GameView(int clientID, ObjectOutputStream out){
         this.clientID = clientID;
         this.out = out;
-        JFrame frame = new JFrame("Chess Client");
-        frame.setResizable(false);
+        frame = new JFrame("Chess Client");
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(750, 650));
+        mainPanel = new JPanel();
+        mainPanel.setPreferredSize(new Dimension(800, 800));
         mainPanel.setBackground(new Color(192, 192, 192));
+
+        displayPanel = new JPanel(new GridLayout(1, 1));
+        displayPanel.setBackground(new Color(192, 192, 192));
+        displayPanel.setPreferredSize(new Dimension(400, 50));
+
+        statusLabel = new JLabel("Current Player: ");
+        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
+        displayPanel.add(statusLabel);
 
         boardPanel = new JPanel(new GridLayout(10, 10));
         boardPanel.setBackground(new Color(192, 192, 192));
         generateChessBoard();
         ChessPieces chessPieces = new ChessPieces(boardSegment);
+        mainPanel.add(displayPanel);
         mainPanel.add(boardPanel);
 
         frame.getContentPane().add(mainPanel);
@@ -76,6 +90,23 @@ public class GameView {
                 boardSegment[row][col].setOpaque(true);
                 boardSegment[row][col].setBorder(null);
             }
+        }
+    }
+
+    public void displayCheckStatus(){
+        statusLabel.setText("Currently in Check");
+    }
+
+    public void setInitDisplay(){
+        statusLabel.setText("Current Player: White");
+    }
+
+    public void updateDisplay(ChessPieceColor color){
+        if(color == ChessPieceColor.W){
+            statusLabel.setText("Current Player: White");
+        }
+        else{
+            statusLabel.setText("Current Player: Black");
         }
     }
 

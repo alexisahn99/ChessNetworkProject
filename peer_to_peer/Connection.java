@@ -26,7 +26,8 @@ public class Connection implements Runnable {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 // Updated to pass 'this' as the source connection
-                peer.receiveMessage(inputLine, this);
+                String userName = peer.getUserName();
+                peer.receiveMessage(inputLine, userName, this);
             }
         } catch (IOException e) {
             close();

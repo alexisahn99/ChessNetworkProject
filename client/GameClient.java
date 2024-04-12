@@ -4,16 +4,19 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import server.model.ChessPieces.ChessPieceColor;
 import utility.FunctionFlag;
 import utility.Tuple;
+import peer_to_peer.Peer;
 
 
 public class GameClient {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
-    private static ChatGUI chatGUI;
     private static GameView gameView;
     private static int clientID;
+    private static String userName;
+    private static Peer peer;
 
     public static void main(String[] args) {
         /* 
@@ -32,7 +35,9 @@ public class GameClient {
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
             clientID = 10; //TODO: Hardcoded for now
+            userName = "Brandon";
             gameView = new GameView(clientID, out);
+            gameView.setInitDisplay();
 
             while(true){
                 try{
@@ -53,7 +58,13 @@ public class GameClient {
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
+            ChessPieceColor currPlayer = tuple.getCurrentPlayerColor();
+            gameView.updateDisplay(currPlayer);
+            //if king is not in checkmate (game still going)
             if(!tuple.isCheckMate()){
+                if(tuple.isCheck() == true){
+                    gameView.displayCheckStatus();
+                }
                 switch(flag){
                     case DESTINATION:
                         //Outline all possible moves for player

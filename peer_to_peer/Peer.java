@@ -8,16 +8,19 @@ public class Peer {
     private final int port;
     private final Set<Connection> connections = Collections.synchronizedSet(new HashSet<>());
     private ServerSocket serverSocket;
+    private PeerGUI gui;
+    private String userName;
 
-    public Peer(int port) {
+    public Peer(int port, String userName) {
         this.port = port;
+        this.userName = userName;
     }
 
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
-            // System.out.println("Peer: started on port " + port);
-
+            //Create GUI by passing Peer and UserName
+            gui = new PeerGUI(this, this.userName);
             new Thread(this::acceptConnections).start();
             new Thread(this::handleUserInput).start();
 
@@ -50,12 +53,18 @@ public class Peer {
 
     public void sendMessage(String message) {
         connections.forEach(connection -> connection.sendMessage(message));
+        gui.appendMessage(this.userName + ": " + message);
     }
 
-    public void receiveMessage(String message, Connection sourceConnection) {
-        System.out.println("Received: " + message);
+    public void receiveMessage(String message, String userName, Connection sourceConnection) {
+        System.out.println(userName + ": " + message);
+        gui.appendMessage(userName + ": " + message);
         // Forward the message to other peers, excluding the source
         forwardMessage(message, sourceConnection);
+    }
+
+    public String getUserName(){
+        return this.userName;
     }
 
     private void forwardMessage(String message, Connection sourceConnection) {
@@ -92,7 +101,8 @@ public class Peer {
             return;
         }
         int port = Integer.parseInt(args[0]);
-        Peer peer = new Peer(port);
+        String userName = "Brandon";
+        Peer peer = new Peer(port, userName);
         peer.start();
     
         if (args.length == 3) {
