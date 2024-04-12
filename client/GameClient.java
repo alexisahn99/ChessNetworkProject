@@ -3,7 +3,6 @@ package client;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import server.model.ChessPieces.ChessPieceColor;
 import utility.FunctionFlag;
@@ -123,11 +122,6 @@ public class GameClient {
                 client.close();
             }
             this.portNum = newPortNum;
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-        
-            }
             runGame();
         }
         catch (IOException e)

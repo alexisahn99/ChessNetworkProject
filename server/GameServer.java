@@ -12,7 +12,6 @@ public class GameServer {
     private Set<UserThread> userThreads;
     private int userNum;
     private int centralPortNum;
-    private static OutputStream out;
     private GameLogic gameLogic;
     //private static OutputStream out;
     private PrintWriter out;
@@ -36,7 +35,6 @@ public class GameServer {
         } catch (IOException err) {
             System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
         }
-        execute();
     }
  
     public void execute() {
@@ -70,7 +68,7 @@ public class GameServer {
         }
     }
  
- multiple GameServers to the head server
+ // multiple GameServers to the head server
        
     /**
      * Delivers data from one user to others (broadcasting)

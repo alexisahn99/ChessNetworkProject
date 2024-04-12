@@ -174,9 +174,10 @@ public class HeadServer implements Runnable
                         System.out.println(message);
                         if (!isInt) {
                             int newPortNum = headServerNode.findPortNum();
+                            GameServer gameServer = new GameServer(newPortNum);
                             out.println(newPortNum);
                             shutdown();
-                            GameServer gameServer = new GameServer(newPortNum);
+                            gameServer.execute();
                         }
 
                         else {
