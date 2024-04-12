@@ -197,14 +197,14 @@ public class GameClient {
     }
 
     public static void main(String[] args) {
-        /* 
-        if (args.length < 2) {
-            System.out.println("Usage: java TestClient <server IP> <port number>");
+        
+        if (args.length < 1) {
+            System.out.println("Usage: java GameClient <server IP>");
             return;
         }
-        */
-        String hostname = "127.0.0.1"; //args[0];
-        int port = 32156; // Integer.parseInt(args[1]);
+        
+        String hostname = args[0];
+        int port = 32156; 
 
         GameClient gameClient = new GameClient(hostname, port);
         gameClient.run();
