@@ -5,20 +5,22 @@ import java.net.*;
 import java.util.*;
 
 public class Peer {
-    private final int port;
+    private final int selfPortNum;
+    private final int centralPortNum;
     private final Set<Connection> connections = Collections.synchronizedSet(new HashSet<>());
     private ServerSocket serverSocket;
     private PeerGUI gui;
     private String userName;
 
-    public Peer(int port, String userName) {
-        this.port = port;
+    public Peer(int selfPortNum, String userName, int centralPortNum) {
+        this.selfPortNum = selfPortNum;
         this.userName = userName;
+        this.centralPortNum = centralPortNum;
     }
 
     public void start() {
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(selfPortNum);
             //Create GUI by passing Peer and UserName
             gui = new PeerGUI(this, this.userName);
             new Thread(this::acceptConnections).start();
@@ -84,31 +86,15 @@ public class Peer {
         }
     }
 
-    public void connectToPeer(String host, int port) {
+    public void connectToPeer(int centralPortNum) {
         try {
-            Socket peerSocket = new Socket(host, port);
+            String host = "localhost";
+            Socket peerSocket = new Socket(host, centralPortNum);
             Connection connection = new Connection(peerSocket, this);
             connections.add(connection);
             new Thread(connection).start();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Usage: java Peer <port> [peerHost] [peerPort]");
-            return;
-        }
-        int port = Integer.parseInt(args[0]);
-        String userName = "Brandon";
-        Peer peer = new Peer(port, userName);
-        peer.start();
-    
-        if (args.length == 3) {
-            String peerHost = args[1];
-            int peerPort = Integer.parseInt(args[2]);
-            peer.connectToPeer(peerHost, peerPort);
         }
     }
 }

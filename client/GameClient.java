@@ -14,17 +14,20 @@ public class GameClient {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
     private static GameView gameView;
-    private static int clientID;
+    private static int selfPortNum;
+    private int centralPortNum;
     private static String userName;
     private static Peer peer;
 
     public static void main(String[] args) {
-        /* 
-        if (args.length < 2) {
+        
+        if (args.length = 2) {
+            selfPortNum = arg[0];
+            userName = arg[1];
             System.out.println("Usage: java TestClient <server IP> <port number>");
             return;
         }
-        */
+    
         String hostname = "127.0.0.1"; //args[0];
         int port = 21001; // Integer.parseInt(args[1]);
 
@@ -34,10 +37,22 @@ public class GameClient {
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            clientID = 10; //TODO: Hardcoded for now
-            userName = "Brandon";
+            //clientID = 10; //TODO: Hardcoded for now
+            //userName = "Brandon";
             gameView = new GameView(clientID, out);
             gameView.initializeDisplay();
+            //peer = new Peer(selfPortNum, userName, centralPortNum)
+            peer = new Peer(selfPortNum, userName);
+            peer.start();
+            
+            if (args.length == 3) {
+                String peerHost = args[1];
+                int peerPort = Integer.parseInt(args[2]);
+                peer.connectToPeer(peerPort);
+            }
+            if(centralPortNum != null){
+
+            }
 
             while(true){
                 try{
