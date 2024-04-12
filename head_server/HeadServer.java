@@ -110,9 +110,6 @@ public class HeadServer implements Runnable
                 /***** HANDLES SERVER *****/
                 if (whichClient.startsWith("server")) 
                 {
-                    int gameServerPort = headServerNode.findPortNum(); // Finds open port
-                    GameServerNode gameServerNode = new GameServerNode(gameServerPort);
-                    headServerNode.addGameServer(gameServerNode); // Adds gameServerNode to headServerNode gameServers array list
 
                     while (!done)
                     {
@@ -173,9 +170,13 @@ public class HeadServer implements Runnable
 
                         System.out.println(message);
                         if (!isInt) {
-                            int newPortNum = headServerNode.findPortNum();
-                            GameServer gameServer = new GameServer(newPortNum);
-                            out.println(newPortNum);
+                            int gameServerPort = headServerNode.findPortNum(); // Finds open port
+                            GameServerNode gameServerNode = new GameServerNode(gameServerPort);
+                            headServerNode.addGameServer(gameServerNode); // Adds gameServerNode to headServerNode gameServers array list
+                            int centralNum = headServerNode.findPortNum();
+                            IDManagement.allPortNumber.add(centralNum);
+                            GameServer gameServer = new GameServer(gameServerPort, centralNum);
+                            out.println(gameServerPort);
                             shutdown();
                             gameServer.execute();
                             
