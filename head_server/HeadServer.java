@@ -87,10 +87,12 @@ public class HeadServer implements Runnable
         private PrintWriter out;
         private String playerID;
         private PlayerNode playerNode;
+        private boolean findPort;
 
         public ConnectionHandler (Socket client)
         {
             this.client = client;
+            findPort = false;
 
         }
 
@@ -130,6 +132,7 @@ public class HeadServer implements Runnable
                         out.println("Nickname is already in use. Enter another nickname: ");
                         playerID = in.readLine();
                     }
+                    out.println("done");
 
                     int playerPortNum = headServerNode.findPortNum(); // Finds Port number for client (Used in P2P)
                     PlayerNode playerNode = new PlayerNode(playerID, playerPortNum);
@@ -142,10 +145,7 @@ public class HeadServer implements Runnable
                     for (GameServerNode gameServer : headServerNode.getAllGameServers()) {
                         out.println(gameServer.getPortNumber());
                     }
-
-                    String message;
-                    message = in.readLine();
-                    boolean findPort = false;
+                    out.println("over");
 
                     /* While loop accepts terminal input from player. If player enters "New Server", a game server is created and 
                        the port number of the new server is sent to the client. The head server then immediately ends connection 
@@ -157,23 +157,38 @@ public class HeadServer implements Runnable
                        This needs to be changed when GUI is created.
                     */
 
+                    String message;
+                    boolean findPort = false;
+
+
+
                     while (!findPort)
                     {
+                        message = in.readLine();
+                        int clientToPortNum;
+                        boolean isInt = false;
+                        try {
+                            clientToPortNum = Integer.parseInt(in.readLine)
+                            isInt = true;
+                        } catch (NumberFormatException e) {}
+
                         System.out.println(message);
-                        if (message.startsWith("New server")) {
+                        if (!isInt) {
                             int newPortNum = headServerNode.findPortNum();
-                            GameServer gameServer = new GameServer(newPortNum);
                             out.println(newPortNum);
-                            findPort = true;
                             shutdown();
+                            GameServer gameServer = new GameServer(newPortNum);
                         }
-                        int portNum = Integer.parseInt(message);
-                        GameServerNode gameServer = headServerNode.findGameServerByPort(portNum);
-                        if (gameServer != null) {
-                            out.println(portNum);
-                            System.out.println("Connecting client to server with port number: " + message);
-                            findPort = true;
-                            shutdown();
+
+                        else {
+                            if (IDManagement.contains(clientToPortNum)) {
+                                out.println(message);
+                                System.out.println("Connecting client to server with port number: " + message)
+                                shutdown();
+                            }
+                            else {
+                                out.println("no");
+                            }
                         }
                         
                     }
@@ -198,7 +213,7 @@ public class HeadServer implements Runnable
         {
             try
             {
-                done = true;
+                this.findPort = true;
                 in.close();
                 out.close();
                 if (!client.isClosed())
