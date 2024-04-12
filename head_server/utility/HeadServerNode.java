@@ -8,7 +8,6 @@ public class HeadServerNode {
     private int serverPortNum;
     private ArrayList<GameServerNode> gameServers;
     private ArrayList<PlayerNode> players;
-    private int serverPortNum;
 
     public HeadServerNode() {
         this.portNumber = 32156;
@@ -81,7 +80,8 @@ public class HeadServerNode {
     }
 
     public void addPlayer(PlayerNode client) {
-        IDManagement.allPortNumber.add(client.getClientId());
+        IDManagement.allClientIDs.add(client.getClientId());
+        IDManagement.allPortNumber.add(client.getPortNumber());
         this.players.add(client);
     }
 

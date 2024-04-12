@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import utility.FunctionFlag;
 import utility.Tuple;
@@ -119,6 +120,11 @@ public class GameClient {
                 client.close();
             }
             this.portNum = newPortNum;
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+        
+            }
             runGame();
         }
         catch (IOException e)
@@ -149,7 +155,7 @@ public class GameClient {
             System.out.println("I/O error creating socket: " + err.getMessage());
         }
     }
-    
+
     private static void handleInput(Object input){
         if(input instanceof Tuple){
             
