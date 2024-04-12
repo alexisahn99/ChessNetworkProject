@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class IDManagement {
-    private static Set<String> allClientIDs = new HashSet<>();
-    private static Set<Integer> allPortNumber = new HashSet<>();
+    public static Set<String> allClientIDs = new HashSet<>();
+    public static Set<Integer> allPortNumber = new HashSet<>();
 
     // Adds a client ID to the set if not already present, ensuring uniqueness
     public static boolean addClientId(String clientId) {

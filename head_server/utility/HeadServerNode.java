@@ -5,18 +5,31 @@ import java.util.Iterator;
 
 public class HeadServerNode {
     private int portNumber;
+    private int serverPortNum;
     private ArrayList<GameServerNode> gameServers;
     private ArrayList<PlayerNode> players;
 
     public HeadServerNode() {
         this.portNumber = 32156;
+        this.serverPortNum = 32157; // Used for finding unused port number
         IDManagement.addPortNumber(this.portNumber);
         this.gameServers = new ArrayList<>();
         this.players = new ArrayList<>();
+        this.serverPortNum = 32157; // Used for finding unused port number
     }
 
     public int getPortNumber() {
         return this.portNumber;
+    }
+
+    /* This function finds and returns an unused port number */
+    public int findPortNum() {
+        int serverPort = this.serverPortNum;
+        while(IDManagement.allPortNumber.contains(serverPort))
+        {
+            serverPort ++;
+        }
+        return serverPort;
     }
 
     ////////////////////* GAME SERVER FUNCTIONS *////////////////////
@@ -24,7 +37,7 @@ public class HeadServerNode {
     public ArrayList<GameServerNode> getAllGameServers() {
         return gameServers;
     }
-
+/*
     public boolean addGameServer(GameServerNode server) {
         if (IDManagement.addPortNumber(server.getPortNumber())) {
             this.gameServers.add(server);
@@ -32,6 +45,15 @@ public class HeadServerNode {
         } else {
             return false; // Server Port Number is a duplicate and was not added
         }
+    } */
+    public void addGameServer(GameServerNode server) {
+        this.gameServers.add(server);
+        IDManagement.allPortNumber.add(server.getPortNumber());
+    }
+*/
+
+    public void addGameServer(GameServerNode server) {
+        this.gameServers.add(server);
     }
 
     public GameServerNode findGameServerByPort(int portNumber) {
@@ -62,13 +84,10 @@ public class HeadServerNode {
         return players;
     }
 
-    public boolean addPlayer(PlayerNode client) {
-        if (IDManagement.addClientId(client.getClientId())) {
-            this.players.add(client);
-            return true; // Client added successfully
-        } else {
-            return false; // Client ID is a duplicate and was not added
-        }
+    public void addPlayer(PlayerNode client) {
+        IDManagement.allClientIDs.add(client.getClientId());
+        IDManagement.allPortNumber.add(client.getPortNumber());
+        this.players.add(client);
     }
 
     public PlayerNode findPlayer(int portNumber) {
