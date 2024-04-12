@@ -43,7 +43,7 @@ public class Controller {
             return this.selectPiece(row, col, portNum);
         }
         else if (clickCount == 0) {
-            return this.selectPlayer();
+            return this.getPlayerChessPieces();
         }
         else 
         {
@@ -52,10 +52,30 @@ public class Controller {
         }
     }
 
-    public Tuple selectPlayer() {
+    // getPlayerChessPieces is to enable current client's chess pieces when click = 0
+    public Tuple getPlayerChessPieces() {
         FunctionFlag functionFlag = FunctionFlag.SOURCE;
         ArrayList<int[]> movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
-        return new Tuple(functionFlag, movableSquares, null, false, false, this.getCurrentPlayer(), 0);
+        boolean isCheck = this.board.isCheck();
+        boolean isCheckMate = this.board.isCheckMate();
+        return new Tuple(functionFlag, movableSquares, null, isCheck, isCheckMate, this.getCurrentPlayer(), 0);
+    }
+
+    public Tuple getAllChessPieces() {
+        FunctionFlag functionFlag = FunctionFlag.REPAINT;
+        ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation();;
+        ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
+        boolean isCheck = this.board.isCheck();
+        boolean isCheckMate = this.board.isCheckMate();
+
+        for (int[] piece : allCurrentPieces) {
+            int row = piece[0];
+            int col = piece[1];
+            String label = this.board.getChessPiece(row, col).getLabel();
+            allCurrentPieceUnicodes.add(label);
+        }
+
+        return new Tuple(functionFlag, allCurrentPieces, allCurrentPieceUnicodes, isCheck, isCheckMate, this.getCurrentPlayer(), 0);
     }
 
     public Tuple selectPiece(int fromRow, int fromCol, int portNum) {
@@ -67,7 +87,7 @@ public class Controller {
         if (movableSquares.size() == 0)
         {
             this.board.setClickCount(0);
-            return this.selectPlayer();
+            return this.getPlayerChessPieces();
         }
         else {
             return new Tuple(functionFlag, movableSquares, null, false, false, this.getCurrentPlayer(), portNum);
@@ -77,12 +97,6 @@ public class Controller {
 
     public Tuple selectDestination(int toRow, int toCol, int portNum)
     {
-        FunctionFlag functionFlag = FunctionFlag.SOURCE;
-        ArrayList<int[]> allCurrentPieces = null;
-        ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
-        boolean isCheck = false;
-        boolean isCheckMate = false;
-
         // 1. Determine whether it is a legal destination
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
         for (int[] square : movableSquares) {
@@ -90,30 +104,12 @@ public class Controller {
                 // 1-1. Move is valid, so we return a tuple indicating this
                 this.board.placeChessPiece(toRow, toCol, this.currentChessPiece);
                 this.switchPlayers();
-                functionFlag = FunctionFlag.REPAINT;
+                return this.getAllChessPieces();
             }
         }
         // 1-2. If no valid move was found, we consider the move invalid
-
-        // 2. Check for game over
-        isCheckMate = this.board.isCheckMate();
-        if (isCheckMate) 
-        {
-            // Game over
-        }
-        else
-        {
-            isCheck = this.board.isCheck();
-            allCurrentPieces = this.board.getPiecesLocation();
-            for (int[] piece : allCurrentPieces) {
-                int row = piece[0];
-                int col = piece[1];
-                String label = this.board.getChessPiece(row, col).getLabel();
-                allCurrentPieceUnicodes.add(label);
-            }
-        }
-
-        return new Tuple(functionFlag, allCurrentPieces, allCurrentPieceUnicodes, isCheck, isCheckMate, this.getCurrentPlayer(), portNum);
+        this.board.setClickCount(0);
+        return this.getPlayerChessPieces();
     }
 
     public boolean isCheck() {

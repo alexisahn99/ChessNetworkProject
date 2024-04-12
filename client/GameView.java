@@ -97,7 +97,20 @@ public class GameView {
         statusLabel.setText("Currently in Check");
     }
 
+    public void displayCheckMateStatus(ChessPieceColor color){
+        String winner;
+        if(color == ChessPieceColor.B){
+            winner = "White";
+        }
+        else{
+            winner = "Black";
+        }
+        statusLabel.setText("Check Mate | Winner: " + winner);
+
+    }
+
     public void setInitDisplay(){
+        this.disableBoard();
         statusLabel.setText("Current Player: White");
     }
 

@@ -32,6 +32,9 @@ public class UserThread extends Thread {
             out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             // System.out.println("UserThread: Input and Output streams setup");
+
+            this.sendMove(gameLogic.getAllChessPieces());
+            this.sendMove(gameLogic.getPlayerChessPieces());
   
             while(true) {
                 try {

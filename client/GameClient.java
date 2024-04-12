@@ -54,11 +54,12 @@ public class GameClient {
 
     private static void handleInput(Object input){
         if(input instanceof Tuple){
-            
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
             ArrayList<int[]> pieceLocations = tuple.getChessPieces();
             ChessPieceColor currPlayer = tuple.getCurrentPlayerColor();
+            ArrayList<String> unicodes = tuple.getChessPieceUnicode();
+
             gameView.updateDisplay(currPlayer);
             //if king is not in checkmate (game still going)
             if(!tuple.isCheckMate()){
@@ -76,7 +77,6 @@ public class GameClient {
                         break;
                     case REPAINT:
                         //Update the screen for the next players turn
-                        ArrayList<String> unicodes = tuple.getChessPieceUnicode();
                         gameView.update(pieceLocations, unicodes);
                         break;
                     case DISABLE:
@@ -92,6 +92,10 @@ public class GameClient {
                 // 1. display current player color
                 // 2. is check
                 // 3. is game over, who is winner?
+                // gameView.update(pieceLocations, unicodes);
+                // System.out.println(pieceLocations.size());
+                // System.out.println(unicodes.size());
+                gameView.displayCheckMateStatus(currPlayer);
             }
         }
     }

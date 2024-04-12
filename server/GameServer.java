@@ -45,6 +45,7 @@ public class GameServer {
                 }
 
                 newUser.start();
+                
             }
  
         } catch (IOException ex) {
@@ -60,7 +61,6 @@ public class GameServer {
             System.exit(0);
         }
         */
-
 
         // TODO change so that this number is not static. Will otherwise throw an error when connecting
         // multiple GameServers to the head server
@@ -94,7 +94,7 @@ public class GameServer {
                 aUser.sendMove(result);
                 if(aUser.getPlayerColor() == playerColor) {
                     // enable your squares
-                    aUser.sendMove(this.gameLogic.currentPlayerPieces());
+                    aUser.sendMove(this.gameLogic.getPlayerChessPieces());
                 }
             }
     }
