@@ -99,6 +99,12 @@ public class GameServer {
             }
     }
 
+    public void endGameBroadcast(Tuple result) {
+        for (UserThread aUser : userThreads) {
+                aUser.sendMove(result);
+            }
+    }
+
     public void setCentralPortNum(int portNum) {
         centralPortNum = portNum;
     }

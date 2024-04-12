@@ -34,7 +34,13 @@ public class UserThread extends Thread {
             // System.out.println("UserThread: Input and Output streams setup");
 
             this.sendMove(gameLogic.getAllChessPieces());
-            this.sendMove(gameLogic.getPlayerChessPieces());
+            if (this.playerColor != gameLogic.getCurrentPlayer()) {
+                this.disableBoard(gameLogic.getCurrentPlayer());
+            }
+            else {
+                this.sendMove(gameLogic.getPlayerChessPieces());
+            }
+            
   
             while(true) {
                 try {
@@ -53,13 +59,14 @@ public class UserThread extends Thread {
                         // do nothing, wrong turn
                     }
                     else {
-                        if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
+                        if(tuple.getFunctionFlag() == FunctionFlag.CHECKMATE) {
+                            server.endGameBroadcast(tuple);
+                        }
+                        else if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
                             // end of turn, everybody needs to repaint
                             ChessPieceColor currentPlayerColor = tuple.getCurrentPlayerColor();
                             server.broadcast(tuple, currentPlayerColor);
-                            // your turn is over, disable the board
-                            Tuple temp = new Tuple(FunctionFlag.DISABLE, null, null, gameLogic.isCheck(), gameLogic.isCheckMate(), currentPlayerColor, playerPortNumber);
-                            this.sendMove(temp);
+                            this.disableBoard(currentPlayerColor);
                         } else {
                             // YOUR turn is not over yet
                             this.sendMove(tuple);
@@ -82,6 +89,11 @@ public class UserThread extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void disableBoard(ChessPieceColor currentPlayerColor) {
+        // your turn is over, disable the board
+        this.sendMove(new Tuple(FunctionFlag.DISABLE, null, null, gameLogic.isCheck(), gameLogic.isCheckMate(), currentPlayerColor, playerPortNumber));
     }
  
  
