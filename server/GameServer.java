@@ -66,11 +66,6 @@ public class GameServer {
             ex.printStackTrace();
         }
     }
-<<<<<<< HEAD
-=======
- 
- // multiple GameServers to the head server
->>>>>>> refs/remotes/origin/RobertRebase
        
     /**
      * Delivers data from one user to others (broadcasting)

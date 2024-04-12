@@ -50,10 +50,6 @@ public class HeadServerNode {
         this.gameServers.add(server);
         IDManagement.allPortNumber.add(server.getPortNumber());
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/RobertRebase
 
     public GameServerNode findGameServerByPort(int portNumber) {
         for (GameServerNode gameServer : this.gameServers) {
