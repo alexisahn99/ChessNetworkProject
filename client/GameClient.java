@@ -12,32 +12,140 @@ import utility.Tuple;
 public class GameClient {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
+    private BufferedReader headIn;
+    private PrintWriter headOut;
     private static GameView gameView;
-
     private static int centralPortNum;
+    private Socket client;
+    private boolean done;
+    private boolean newConnection;
+    private int headPortNum;
+    private int gamePortNum;
+    private int selfPortNum;
+    private String hostname;
+    private boolean notConnected;
+    private String userName;
 
-    public static void main(String[] args) {
-        int selfPortNum;
-        String userName;
-        if (args.length == 2) {
-            selfPortNum = Integer.parseInt(args[0]);
-            userName = args[1];
-        }
-        else {
-            System.out.println("Usage: java GameClient <selfPortNum> <userName>");
-            return;
-        }
-    
-        String hostname = "127.0.0.1"; //args[0];
-        int gameServerPort = 21001; // Integer.parseInt(args[1]);
+    public GameClient(String hostname, int headPortNum) {
+        done = false;
+        newConnection = false;
+        notConnected = false;
+        this.headPortNum = headPortNum;
+        this.hostname = hostname;
+    }
 
+    public void run()
+    {
+        try
+        {
+            client = new Socket(this.hostname, this.headPortNum);
+            headOut = new PrintWriter(client.getOutputStream(), true);
+            headIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+            while(!done) {
+                try
+            {
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
+                headOut.println("client");
+
+                // Setting username that the client types in
+                // Checks the username with the HeadServer to makes sure it's available
+                // Is good when "done" message received
+                String serverMessage = headIn.readLine();
+                while(!serverMessage.equals("done")) {
+                    System.out.println(serverMessage);
+                    this.userName = inReader.readLine();
+                    headOut.println(this.userName);
+                    serverMessage = headIn.readLine();
+                }
+
+                 // Printing available ports
+                serverMessage = headIn.readLine();
+                while (!serverMessage.equals("over")) {
+                    System.out.println(serverMessage);
+                    serverMessage = headIn.readLine();
+                }
+
+                String message;
+
+                while (!done)
+                {
+                    message = inReader.readLine();
+                    headOut.println(message);
+                    serverMessage = headIn.readLine();
+                    if (!serverMessage.equals("no")) {
+                        this.gamePortNum = Integer.parseInt(serverMessage);
+                        System.out.println("Moving to game server");
+                        transferToPort(this.gamePortNum);
+                    }
+                // TODO check port number to ensure it's a server
+                    else {
+                        System.out.println("Incorrect entry. Enter port number or any letter for new server");
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                shutdown();
+            }
+
+            }
+        }
+        catch (IOException e)
+        {
+            shutdown();
+        }
+    }
+
+    public void shutdown()
+    {
+        try
+        {
+            done = true;
+            headIn.close();
+            headOut.close();
+            if (!client.isClosed())
+            {
+                client.close();
+            }
+        }
+        catch (IOException e)
+        {
+
+        }
+    }
+
+    public void transferToPort(int gamePortNum)
+    {
+        try
+        {
+            done = true;
+            headIn.close();
+            headOut.close();
+            if (!client.isClosed())
+            {
+                client.close();
+            }
+            this.gamePortNum = gamePortNum;
+            runGame();
+        }
+        catch (IOException e)
+        {
+            shutdown();
+        }
+    }
+
+    public void runGame() {
         try {
-            Socket clientSocket = new Socket(hostname, gameServerPort);
+
+            Socket clientSocket = new Socket(this.hostname, this.gamePortNum);
             // System.out.println("Connected to server.");
 
+          // TODO need to assign the selfPortNum from the head server
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
             gameView = new GameView(selfPortNum, userName, out);
+
             gameView.initializeDisplay();
 
             while(true){
@@ -96,5 +204,19 @@ public class GameClient {
                     break;
             }
         }
+    }
+
+    public static void main(String[] args) {
+        
+        if (args.length < 1) {
+            System.out.println("Usage: java GameClient <server IP>");
+            return;
+        }
+        
+        String hostname = args[0];
+        int headPortNum = 32156; 
+
+        GameClient gameClient = new GameClient(hostname, headPortNum);
+        gameClient.run();
     }
 }

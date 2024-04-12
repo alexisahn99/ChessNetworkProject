@@ -13,9 +13,9 @@ public class GameServer {
     private Set<UserThread> userThreads;
     private int userNum;
     private int chatPortNum;
-    private static OutputStream out;
     private GameLogic gameLogic;
     private Peer peer;
+    private PrintWriter headOut;
  
     public GameServer(int selfPortNum, int chatPortNum) {
         this.selfPortNum = selfPortNum;
@@ -24,6 +24,20 @@ public class GameServer {
         this.userNum = 0;
         this.gameLogic = new GameLogic();
         this.initPeerToPeer();
+      
+        String hostname = "127.0.0.1";
+        int headport = 32156; // Integer.parseInt(args[1]);
+ 
+        // Connect to the head server
+        try  {
+            Socket clientSocket = new Socket(hostname, headport);
+            System.out.println("Game Server: Connected to head server.");
+            this.headOut = new PrintWriter(clientSocket.getOutputStream(), true);
+            this.headOut.println("server");
+
+        } catch (IOException err) {
+            System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
+        }
     }
     
  
@@ -57,47 +71,14 @@ public class GameServer {
             ex.printStackTrace();
         }
     }
- 
-    public static void main(String[] args) {
-        /*
-        if (args.length < 1) {
-            System.out.println("Syntax: java GameServer <selfPortNum-number>");
-            System.exit(0);
-        }
-        */
-
-        // TODO change so that this number is not static. Will otherwise throw an error when connecting
-        // multiple GameServers to the head server
-        int selfPortNum = 21001;  //Integer.parseInt(args[0]);
-        int chatPortNum = 21002;
-
-        String hostname = "127.0.0.1";
-        int headPortNum = 32156; // Integer.parseInt(args[1]);
- 
-        // Connect to the head server
-        try  {
-            Socket clientSocket = new Socket(hostname, headPortNum);
-            // System.out.println("GameServer: Connected to head server.");
-            out = clientSocket.getOutputStream();
-            DataOutputStream dataOut = new DataOutputStream(out);
-            dataOut.writeUTF("Server");
-
-        } catch (IOException err) {
-            System.out.println("ERROR in GameServer: I/O error creating socket with head server: " + err.getMessage());
-        }
-
-        // Create the game server and run it
-        GameServer server = new GameServer(selfPortNum, chatPortNum);
-        server.execute();
-    }
- 
+       
     /**
      * Delivers data from one user to others (broadcasting)
      */
     public void broadcast(Tuple result, ChessPieceColor playerColor) {
         for (UserThread aUser : userThreads) {
                 aUser.sendMove(result);
-                if(aUser.getPlayerColor() == playerColor) {
+                if (aUser.getPlayerColor() == playerColor) {
                     // enable your squares
                     aUser.sendMove(this.gameLogic.getPlayerChessPieces());
                 }
