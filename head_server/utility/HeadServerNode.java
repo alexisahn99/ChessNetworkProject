@@ -50,11 +50,6 @@ public class HeadServerNode {
         this.gameServers.add(server);
         IDManagement.allPortNumber.add(server.getPortNumber());
     }
-*/
-
-    public void addGameServer(GameServerNode server) {
-        this.gameServers.add(server);
-    }
 
     public GameServerNode findGameServerByPort(int portNumber) {
         for (GameServerNode gameServer : this.gameServers) {

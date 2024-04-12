@@ -12,9 +12,7 @@ public class GameServer {
     private Set<UserThread> userThreads;
     private int userNum;
     private int centralPortNum;
-    private static OutputStream out;
     private GameLogic gameLogic;
-    //private static OutputStream out;
     private PrintWriter out;
  
     public GameServer(int port) {
@@ -36,7 +34,6 @@ public class GameServer {
         } catch (IOException err) {
             System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
         }
-        execute();
     }
  
     public void execute() {
@@ -69,8 +66,6 @@ public class GameServer {
             ex.printStackTrace();
         }
     }
- 
- multiple GameServers to the head server
        
     /**
      * Delivers data from one user to others (broadcasting)
@@ -78,7 +73,7 @@ public class GameServer {
     public void broadcast(Tuple result, ChessPieceColor playerColor) {
         for (UserThread aUser : userThreads) {
                 aUser.sendMove(result);
-                if(aUser.getPlayerColor() == playerColor) {
+                if (aUser.getPlayerColor() == playerColor) {
                     // enable your squares
                     aUser.sendMove(this.gameLogic.getPlayerChessPieces());
                 }
