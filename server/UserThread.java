@@ -28,13 +28,13 @@ public class UserThread extends Thread {
  
     public void run() {
         try {
-            System.out.println("UserThread Running");
-
+            // System.out.println("UserThread: Running");
             out = new ObjectOutputStream(socket.getOutputStream());
-
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
- 
-            System.out.println("Input and Output streams setup");
+            // System.out.println("UserThread: Input and Output streams setup");
+
+            this.sendMove(gameLogic.getAllChessPieces());
+            this.sendMove(gameLogic.getPlayerChessPieces());
   
             while(true) {
                 try {
@@ -47,12 +47,25 @@ public class UserThread extends Thread {
                         server.setCentralPortNum(playerPortNumber);
                     }
                     
-                    Tuple logicCheck = gameLogic.checkMove(playerColor, curMove, server.getCentralPortNum());
+                    Tuple tuple = gameLogic.checkMove(playerColor, curMove, playerPortNumber);
 
-                    if(logicCheck != null && logicCheck.getFunctionFlag() == FunctionFlag.REPAINT) {
-                        // Repaint the board. 
-                        server.broadcast(logicCheck, this);
-                    }                 
+                    if (tuple == null) {
+                        // do nothing, wrong turn
+                    }
+                    else {
+                        if(tuple.getFunctionFlag() == FunctionFlag.REPAINT) {
+                            // end of turn, everybody needs to repaint
+                            ChessPieceColor currentPlayerColor = tuple.getCurrentPlayerColor();
+                            server.broadcast(tuple, currentPlayerColor);
+                            // your turn is over, disable the board
+                            Tuple temp = new Tuple(FunctionFlag.DISABLE, null, null, gameLogic.isCheck(), gameLogic.isCheckMate(), currentPlayerColor, playerPortNumber);
+                            this.sendMove(temp);
+                        } else {
+                            // YOUR turn is not over yet
+                            this.sendMove(tuple);
+                        }
+                    }
+                                
 
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -60,7 +73,7 @@ public class UserThread extends Thread {
             }
  
         } catch (IOException ex) {
-            System.out.println("Error in UserThread: " + ex.getMessage());
+            System.out.println("ERROR in UserThread: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             try {
@@ -75,7 +88,7 @@ public class UserThread extends Thread {
     /**
      * Sends a data to the client.
      */
-    void sendMove(Tuple move) {
+    public void sendMove(Tuple move) {
         try {
             out.writeObject(move);
         } catch (IOException e) {
@@ -83,12 +96,16 @@ public class UserThread extends Thread {
         }
     }
 
-    void setPlayerColor(ChessPieceColor color) {
-        playerColor = color;
-        System.out.println("Player pieces set to "+ color.toString());
+    public ChessPieceColor getPlayerColor() {
+        return this.playerColor;
     }
 
-    int getPortNumber() {
-        return playerPortNumber;
+    public void setPlayerColor(ChessPieceColor color) {
+        this.playerColor = color;
+        // System.out.println("UserThread: Player pieces set to "+ color.toString());
+    }
+
+    public int getPortNumber() {
+        return this.playerPortNumber;
     }
 }

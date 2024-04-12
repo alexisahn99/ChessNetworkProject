@@ -4,34 +4,37 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import client.GameClient;
 import server.model.ChessPieces.ChessPieceColor;
 import utility.Tuple;
 
 public class GameServer {
     private int port;
-    private Set<UserThread> userThreads = new HashSet<>();
-    private int userNum = 0;
-    private int centralPortNum = 0;
+    private Set<UserThread> userThreads;
+    private int userNum;
+    private int centralPortNum;
     private static OutputStream out;
+    private GameLogic gameLogic;
  
     public GameServer(int port) {
         this.port = port;
+        this.userThreads = new HashSet<>();
+        this.userNum = 0;
+        this.centralPortNum = 0;
+        this.gameLogic = new GameLogic();
     }
  
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
  
-            System.out.println("Game Server is listening on port " + port);
+            // System.out.println("GameServer: listening on port " + port);
  
             while (true) {
             
                 Socket socket = serverSocket.accept();
-                System.out.println("New user connected");
+                // System.out.println("GameServer: New user connected");
 
                 userNum++;
-                GameLogic gameLogic = new GameLogic();
-                UserThread newUser = new UserThread(socket, this, gameLogic);
+                UserThread newUser = new UserThread(socket, this, this.gameLogic);
                 userThreads.add(newUser);
                 if (userNum == 1) {
                     newUser.setPlayerColor(ChessPieceColor.W);
@@ -42,10 +45,11 @@ public class GameServer {
                 }
 
                 newUser.start();
+                
             }
  
         } catch (IOException ex) {
-            System.out.println("Error in the server: " + ex.getMessage());
+            System.out.println("ERROR in Game Server: error in the server: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -58,7 +62,6 @@ public class GameServer {
         }
         */
 
-
         // TODO change so that this number is not static. Will otherwise throw an error when connecting
         // multiple GameServers to the head server
         int port = 21001;  //Integer.parseInt(args[0]);
@@ -69,13 +72,13 @@ public class GameServer {
         // Connect to the head server
         try  {
             Socket clientSocket = new Socket(hostname, headport);
-            System.out.println("Connected to head server.");
+            // System.out.println("GameServer: Connected to head server.");
             out = clientSocket.getOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);
             dataOut.writeUTF("Server");
 
         } catch (IOException err) {
-            System.out.println("I/O error creating socket with head server: " + err.getMessage());
+            System.out.println("ERROR in GameServer: I/O error creating socket with head server: " + err.getMessage());
         }
 
         // Create the game server and run it
@@ -86,20 +89,21 @@ public class GameServer {
     /**
      * Delivers data from one user to others (broadcasting)
      */
-    void broadcast(Tuple result, UserThread excludeUser) {
+    public void broadcast(Tuple result, ChessPieceColor playerColor) {
         for (UserThread aUser : userThreads) {
-            if (aUser != excludeUser) {
                 aUser.sendMove(result);
+                if(aUser.getPlayerColor() == playerColor) {
+                    // enable your squares
+                    aUser.sendMove(this.gameLogic.getPlayerChessPieces());
+                }
             }
-        }
-
     }
 
-    void setCentralPortNum(int portNum) {
+    public void setCentralPortNum(int portNum) {
         centralPortNum = portNum;
     }
 
-    int getCentralPortNum() {
+    public int getCentralPortNum() {
         return centralPortNum;
     }
 }

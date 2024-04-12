@@ -42,6 +42,9 @@ public class Controller {
         {
             return this.selectPiece(row, col, portNum);
         }
+        else if (clickCount == 0) {
+            return this.getPlayerChessPieces();
+        }
         else 
         {
             this.board.setClickCount(0); // if invalidMove, you reset selecting a piece. else, validMove
@@ -49,61 +52,72 @@ public class Controller {
         }
     }
 
-    public Tuple selectPiece(int fromRow, int fromCol, int portNum)
-    // This function always returns movableSquares that a piece can move to. 
-    // It may also return an empty movable squares. 
-    {
-        boolean isValidMove = true;
+    // getPlayerChessPieces is to enable current client's chess pieces when click = 0
+    public Tuple getPlayerChessPieces() {
+        FunctionFlag functionFlag = FunctionFlag.SOURCE;
+        ArrayList<int[]> movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
+        boolean isCheck = this.board.isCheck();
+        boolean isCheckMate = this.board.isCheckMate();
+        return new Tuple(functionFlag, movableSquares, null, isCheck, isCheckMate, this.getCurrentPlayer(), 0);
+    }
+
+    public Tuple getAllChessPieces() {
+        FunctionFlag functionFlag = FunctionFlag.REPAINT;
+        ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation();;
+        ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
+        boolean isCheck = this.board.isCheck();
+        boolean isCheckMate = this.board.isCheckMate();
+
+        for (int[] piece : allCurrentPieces) {
+            int row = piece[0];
+            int col = piece[1];
+            String label = this.board.getChessPiece(row, col).getLabel();
+            allCurrentPieceUnicodes.add(label);
+        }
+
+        return new Tuple(functionFlag, allCurrentPieces, allCurrentPieceUnicodes, isCheck, isCheckMate, this.getCurrentPlayer(), 0);
+    }
+
+    public Tuple selectPiece(int fromRow, int fromCol, int portNum) {
+        FunctionFlag functionFlag = FunctionFlag.DESTINATION;
         this.currentChessPiece = this.board.getChessPiece(fromRow, fromCol);
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
+        
+        // if you click a piece that you cannot move
         if (movableSquares.size() == 0)
         {
             this.board.setClickCount(0);
-            isValidMove = false;
+            return this.getPlayerChessPieces();
+        }
+        else {
+            return new Tuple(functionFlag, movableSquares, null, false, false, this.getCurrentPlayer(), portNum);
         }
         
-        return new Tuple(FunctionFlag.DESTINATION, isValidMove, movableSquares, null, false, this.getCurrentPlayer(), portNum);
     }
 
     public Tuple selectDestination(int toRow, int toCol, int portNum)
     {
-        FunctionFlag functionFlag = FunctionFlag.SOURCE;
-        boolean isValidMove = false;
-        ArrayList<int[]> allCurrentPieces = null;
-        ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
-        boolean isGameOver = false;
-
         // 1. Determine whether it is a legal destination
         ArrayList<int[]> movableSquares = this.board.getMovableSquares(this.currentChessPiece);
         for (int[] square : movableSquares) {
             if (square[0] == toRow && square[1] == toCol) {
                 // 1-1. Move is valid, so we return a tuple indicating this
-                isValidMove = true;
                 this.board.placeChessPiece(toRow, toCol, this.currentChessPiece);
                 this.switchPlayers();
-                functionFlag = FunctionFlag.REPAINT;
+                return this.getAllChessPieces();
             }
         }
         // 1-2. If no valid move was found, we consider the move invalid
+        this.board.setClickCount(0);
+        return this.getPlayerChessPieces();
+    }
 
-        // 2. Check for game over
-        if (this.board.isGameOver()) 
-        {
-            // System.out.println("Game over!");
-            isGameOver = true;
-        }
-        else
-        {
-            allCurrentPieces = this.board.getPiecesLocation();
-            for (int[] piece : allCurrentPieces) {
-                int row = piece[0];
-                int col = piece[1];
-                String label = this.board.getChessPiece(row, col).getLabel();
-                allCurrentPieceUnicodes.add(label);
-            }
-        }
+    public boolean isCheck() {
+        return this.board.isCheck();
+    }
 
-        return new Tuple(functionFlag, isValidMove, allCurrentPieces, allCurrentPieceUnicodes, isGameOver, this.getCurrentPlayer(), portNum);
+    public boolean isCheckMate() {
+        return this.board.isCheckMate();
     }
 
     // TODO: never used

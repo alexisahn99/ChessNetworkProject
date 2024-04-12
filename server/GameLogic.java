@@ -7,26 +7,38 @@ import utility.Tuple;
 
 
 public class GameLogic {
-    private Controller controller = new Controller();
+    private Controller controller;
 
-    public GameLogic() {}
-
-    Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
-
+    public GameLogic() {
+        this.controller = new Controller();
+    }
+    
+    public Tuple checkMove(ChessPieceColor playerColor, Move move, int centralPortNum) {
         if (playerColor == controller.getCurrentPlayer()) {
-
-            System.out.println("Data read");
-
-            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum()); 
-
+            // System.out.println("GameLogic: Data read");
+            Tuple moveResponse = controller.userPressed(move.getRow(), move.getCol(), move.getPortNum());
             moveResponse.setCentralPortNum(centralPortNum);
-            
-            if (playerColor != moveResponse.getCurrentPlayerColor()) {
-                playerColor = moveResponse.getCurrentPlayerColor();
-            }
-            
             return moveResponse;
         }
-        return null;
+        else {
+            return null;
+        }
     }
+
+    public Tuple getAllChessPieces() {
+        return controller.getAllChessPieces();
+    }
+
+    public Tuple getPlayerChessPieces() {
+        return controller.getPlayerChessPieces();
+    }
+
+    public boolean isCheck() {
+        return controller.isCheck();
+    }
+
+    public boolean isCheckMate() {
+        return controller.isCheckMate();
+    }
+    
 }

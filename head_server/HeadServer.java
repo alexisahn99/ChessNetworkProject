@@ -20,12 +20,12 @@ public class HeadServer {
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
  
-            System.out.println("Head Server is listening on port " + port);
+            // System.out.println("HeadServer: listening on port " + port);
  
             while (true) {
             
                 Socket socket = serverSocket.accept();
-                System.out.println("New Game Server connected");
+                // System.out.println("HeadServer: New Game Server connected");
  
                 GameThread newGame = new GameThread(socket, this);
                 gameThreads.add(newGame);
@@ -34,7 +34,7 @@ public class HeadServer {
             }
  
         } catch (IOException ex) {
-            System.out.println("Error in the server: " + ex.getMessage());
+            System.out.println("ERROR in HeadServer: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

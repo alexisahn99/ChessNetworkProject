@@ -5,15 +5,12 @@ package utility;
 */
 
 public enum FunctionFlag {
-    DESTINATION("moveable squares"), // this.view.drawPossibleMoves(movableSquares);
-    SOURCE("current pieces"), // this.view.enableSquares(allCurrentPieces);
-    REPAINT("end of turn"); // this.view.update() 
-    // TODO: when REPAINT we need to send info of what piece is where
+    DISABLE("disable the board"), 
+    DESTINATION("moveable squares"), 
+    SOURCE("current pieces"),
+    REPAINT("end of turn"); 
 
-    FunctionFlag(String s)
-    {
-        //System.out.println("FunctionFlag constructor is called");
-    }
+    FunctionFlag(String s) {}
 }
 
 

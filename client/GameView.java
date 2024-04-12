@@ -7,28 +7,42 @@ import java.awt.*;
 import java.awt.event.*;
 
 import utility.Move;
+import server.model.ChessPieces.ChessPieceColor;
 
 public class GameView {
     private static JPanel boardPanel;
     private static JButton[][] boardSegment;
+    private JFrame frame;
+    private JPanel mainPanel;
+    private JPanel displayPanel;
+    private JLabel statusLabel;
     private ObjectOutputStream out;
     private int clientID;
 
     public GameView(int clientID, ObjectOutputStream out){
         this.clientID = clientID;
         this.out = out;
-        JFrame frame = new JFrame("Chess Client");
-        frame.setResizable(false);
+        frame = new JFrame("Chess Client");
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setPreferredSize(new Dimension(750, 650));
+        mainPanel = new JPanel();
+        mainPanel.setPreferredSize(new Dimension(800, 800));
         mainPanel.setBackground(new Color(192, 192, 192));
+
+        displayPanel = new JPanel(new GridLayout(1, 1));
+        displayPanel.setBackground(new Color(192, 192, 192));
+        displayPanel.setPreferredSize(new Dimension(400, 50));
+
+        statusLabel = new JLabel("Current Player: ");
+        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
+        displayPanel.add(statusLabel);
 
         boardPanel = new JPanel(new GridLayout(10, 10));
         boardPanel.setBackground(new Color(192, 192, 192));
         generateChessBoard();
         ChessPieces chessPieces = new ChessPieces(boardSegment);
+        mainPanel.add(displayPanel);
         mainPanel.add(boardPanel);
 
         frame.getContentPane().add(mainPanel);
@@ -69,13 +83,43 @@ public class GameView {
         panel.add(new JLabel(""));
     }
 
-    private void disableBoard() {
+    public void disableBoard() {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 boardSegment[row][col].setEnabled(false);
                 boardSegment[row][col].setOpaque(true);
                 boardSegment[row][col].setBorder(null);
             }
+        }
+    }
+
+    public void displayCheckStatus(){
+        statusLabel.setText("Currently in Check");
+    }
+
+    public void displayCheckMateStatus(ChessPieceColor color){
+        String winner;
+        if(color == ChessPieceColor.B){
+            winner = "White";
+        }
+        else{
+            winner = "Black";
+        }
+        statusLabel.setText("Check Mate | Winner: " + winner);
+
+    }
+
+    public void setInitDisplay(){
+        this.disableBoard();
+        statusLabel.setText("Current Player: White");
+    }
+
+    public void updateDisplay(ChessPieceColor color){
+        if(color == ChessPieceColor.W){
+            statusLabel.setText("Current Player: White");
+        }
+        else{
+            statusLabel.setText("Current Player: Black");
         }
     }
 
@@ -175,13 +219,13 @@ public class GameView {
         try{
             // Delegate handling of user input to the client
             int clientID = gameView.getClientID();
-            System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
+            // System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
             Move move = new Move(row, col, clientID);
             // Serialize complex data to bytes
             out.writeObject(move);
-            System.out.println("Data sent");
+            // System.out.println("Data sent");
         } catch (IOException err) {
-            System.out.println("I/O error: " + err.getMessage());
+            System.out.println("ERROR in GameView: I/O error - " + err.getMessage());
         }
     }
 }
