@@ -6,22 +6,25 @@ import java.util.*;
 
 import server.model.ChessPieces.ChessPieceColor;
 import utility.Tuple;
+import peer_to_peer.*;
 
 public class GameServer {
-    private int port;
+    private int selfPortNum;
     private Set<UserThread> userThreads;
     private int userNum;
-    private int centralPortNum;
+    private int chatPortNum;
     private GameLogic gameLogic;
-    private PrintWriter out;
+    private Peer peer;
+    private PrintWriter headOut;
  
-    public GameServer(int port, int centralPortNum) {
-        this.port = port;
+    public GameServer(int selfPortNum, int chatPortNum) {
+        this.selfPortNum = selfPortNum;
+        this.chatPortNum = chatPortNum;
         this.userThreads = new HashSet<>();
         this.userNum = 0;
-        this.centralPortNum = 0;
         this.gameLogic = new GameLogic();
-        this.centralPortNum = centralPortNum;
+        this.initPeerToPeer();
+      
         String hostname = "127.0.0.1";
         int headport = 32156; // Integer.parseInt(args[1]);
  
@@ -29,18 +32,19 @@ public class GameServer {
         try  {
             Socket clientSocket = new Socket(hostname, headport);
             System.out.println("Game Server: Connected to head server.");
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            out.println("server");
+            this.headOut = new PrintWriter(clientSocket.getOutputStream(), true);
+            this.headOut.println("server");
 
         } catch (IOException err) {
             System.out.println("ERROR in Game Server: I/O error creating socket with head server: " + err.getMessage());
         }
     }
+    
  
     public void execute() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try (ServerSocket serverSocket = new ServerSocket(selfPortNum)) {
  
-            // System.out.println("GameServer: listening on port " + port);
+            // System.out.println("GameServer: listening on selfPortNum " + selfPortNum);
  
             while (true) {
             
@@ -87,11 +91,12 @@ public class GameServer {
             }
     }
 
-    public void setCentralPortNum(int portNum) {
-        centralPortNum = portNum;
+    public int getCentralPortNum() {
+        return this.chatPortNum;
     }
 
-    public int getCentralPortNum() {
-        return centralPortNum;
+    public void initPeerToPeer(){
+        this.peer = new Peer(this.chatPortNum, "server");
+        this.peer.start();
     }
 }

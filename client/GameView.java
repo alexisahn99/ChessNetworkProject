@@ -8,6 +8,7 @@ import java.awt.event.*;
 
 import utility.Move;
 import server.model.ChessPieces.ChessPieceColor;
+import peer_to_peer.Peer;
 
 public class GameView {
     private static JPanel boardPanel;
@@ -17,11 +18,16 @@ public class GameView {
     private JPanel displayPanel;
     private JLabel statusLabel;
     private ObjectOutputStream out;
-    private int clientID;
 
-    public GameView(int clientID, ObjectOutputStream out){
-        this.clientID = clientID;
+    private int selfPortNum;
+    private String userName;
+    private Peer peer;
+
+    public GameView(int selfPortNum, String userName, ObjectOutputStream out){
+        this.selfPortNum = selfPortNum;
+        this.userName = userName;
         this.out = out;
+
         frame = new JFrame("Chess Client");
         frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -127,8 +133,8 @@ public class GameView {
         return boardSegment[row][col].getText();
     }
 
-    public int getClientID() {
-        return clientID;
+    public int getSelfPortNum() {
+        return this.selfPortNum;
     }
 
     public void drawPossibleMoves(ArrayList<int[]> enabledSquares) {
@@ -153,6 +159,12 @@ public class GameView {
             boardSegment[row][col].setOpaque(true);
             boardSegment[row][col].setBorder(null);
         }
+    }
+
+    public void initPeerToPeer(int centralPortNum){
+        this.peer = new Peer(this.selfPortNum, this.userName);
+        this.peer.start();
+        this.peer.connectToPeer(centralPortNum);
     }
 
     public void removeDots() {
@@ -201,30 +213,34 @@ public class GameView {
         ConvertPawn convertPanel = new ConvertPawn(this.controller.getCurrentPlayer(), this.controller);
     }
     */
-}   class ButtonClickListener implements ActionListener {
+}   
+
+class ButtonClickListener implements ActionListener {
     private int row;
     private int col;
     private GameView gameView;
     private ObjectOutputStream out;
+    private int selfPortNum;
 
     public ButtonClickListener(int row, int col, GameView gameView, ObjectOutputStream out) {
         this.gameView = gameView;
         this.row = row;
         this.col = col;
         this.out = out;
+        this.selfPortNum = gameView.getSelfPortNum();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         try{
             // Delegate handling of user input to the client
-            int clientID = gameView.getClientID();
-            // System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + clientID);
-            Move move = new Move(row, col, clientID);
+            // System.out.println("Row: " + row + " Col: " + col + " Client ID Num: " + selfPortNum);
+            Move move = new Move(row, col, this.selfPortNum);
             // Serialize complex data to bytes
             out.writeObject(move);
             // System.out.println("Data sent");
-        } catch (IOException err) {
+        } 
+        catch (IOException err) {
             System.out.println("ERROR in GameView: I/O error - " + err.getMessage());
         }
     }

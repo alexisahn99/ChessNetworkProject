@@ -7,31 +7,30 @@ import java.util.ArrayList;
 import server.model.ChessPieces.ChessPieceColor;
 import utility.FunctionFlag;
 import utility.Tuple;
-import peer_to_peer.Peer;
 
 
 public class GameClient {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
-    private static GameView gameView;
-    private static int clientID;
-    private static String userName;
-    private static Peer peer;
-
-    private Socket client;
     private BufferedReader headIn;
     private PrintWriter headOut;
+    private static GameView gameView;
+    private static int centralPortNum;
+    private Socket client;
     private boolean done;
     private boolean newConnection;
-    private int portNum;
+    private int headPortNum;
+    private int gamePortNum;
+    private int selfPortNum;
     private String hostname;
     private boolean notConnected;
+    private String userName;
 
-    public GameClient(String hostname, int portNum) {
+    public GameClient(String hostname, int headPortNum) {
         done = false;
         newConnection = false;
         notConnected = false;
-        this.portNum = portNum;
+        this.headPortNum = headPortNum;
         this.hostname = hostname;
     }
 
@@ -39,7 +38,7 @@ public class GameClient {
     {
         try
         {
-            client = new Socket(hostname, portNum);
+            client = new Socket(this.hostname, this.headPortNum);
             headOut = new PrintWriter(client.getOutputStream(), true);
             headIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -49,13 +48,18 @@ public class GameClient {
                 BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
                 headOut.println("client");
 
+                // Setting username that the client types in
+                // Checks the username with the HeadServer to makes sure it's available
+                // Is good when "done" message received
                 String serverMessage = headIn.readLine();
                 while(!serverMessage.equals("done")) {
                     System.out.println(serverMessage);
-                    headOut.println(inReader.readLine());
+                    this.userName = inReader.readLine();
+                    headOut.println(this.userName);
                     serverMessage = headIn.readLine();
                 }
 
+                 // Printing available ports
                 serverMessage = headIn.readLine();
                 while (!serverMessage.equals("over")) {
                     System.out.println(serverMessage);
@@ -70,10 +74,11 @@ public class GameClient {
                     headOut.println(message);
                     serverMessage = headIn.readLine();
                     if (!serverMessage.equals("no")) {
-                        int portNum = Integer.parseInt(serverMessage);
+                        this.gamePortNum = Integer.parseInt(serverMessage);
                         System.out.println("Moving to game server");
-                        transferToPort(portNum);
+                        transferToPort(this.gamePortNum);
                     }
+                // TODO check port number to ensure it's a server
                     else {
                         System.out.println("Incorrect entry. Enter port number or any letter for new server");
                     }
@@ -110,7 +115,7 @@ public class GameClient {
         }
     }
 
-    public void transferToPort(int newPortNum)
+    public void transferToPort(int gamePortNum)
     {
         try
         {
@@ -121,7 +126,7 @@ public class GameClient {
             {
                 client.close();
             }
-            this.portNum = newPortNum;
+            this.gamePortNum = gamePortNum;
             runGame();
         }
         catch (IOException e)
@@ -133,13 +138,14 @@ public class GameClient {
     public void runGame() {
         try {
 
-            Socket clientSocket = new Socket(hostname, portNum);
-            System.out.println("Connected to server.");
+            Socket clientSocket = new Socket(this.hostname, this.gamePortNum);
+            // System.out.println("Connected to server.");
 
+          // TODO need to assign the selfPortNum from the head server
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            clientID = 10; //TODO: Hardcoded for now    
-            gameView = new GameView(clientID, out);
+            gameView = new GameView(selfPortNum, userName, out);
+
             gameView.initializeDisplay();
 
             while(true){
@@ -189,6 +195,10 @@ public class GameClient {
                     gameView.update(pieceLocations, unicodes);
                     gameView.displayCheckMateStatus(currPlayer);
                     break;
+                case PORT:
+                    // set port number
+                    gameView.initPeerToPeer(tuple.getCentralPortNum());
+                    break;
                 default:
                     //incorrect flag recieved ?
                     break;
@@ -204,9 +214,9 @@ public class GameClient {
         }
         
         String hostname = args[0];
-        int port = 32156; 
+        int headPortNum = 32156; 
 
-        GameClient gameClient = new GameClient(hostname, port);
+        GameClient gameClient = new GameClient(hostname, headPortNum);
         gameClient.run();
     }
 }

@@ -40,7 +40,7 @@ public class GameServerNode {
             if (player.getPortNumber() == portNumber) {
                 iterator.remove(); 
                 IDManagement.removePortNumber(portNumber); 
-                IDManagement.removeClientId(player.getClientId());
+                IDManagement.removeClientId(player.getSelfPortNum());
                 return true; 
             }
         }

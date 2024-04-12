@@ -9,6 +9,7 @@ public enum FunctionFlag {
     DESTINATION("moveable squares"), 
     SOURCE("current pieces"),
     REPAINT("end of turn"),
+    PORT("set central port number"),
     CHECKMATE("game over");
 
     FunctionFlag(String s) {}
