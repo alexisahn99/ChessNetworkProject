@@ -6,27 +6,31 @@ import java.util.*;
 
 import server.model.ChessPieces.ChessPieceColor;
 import utility.Tuple;
+import peer_to_peer.*;
 
 public class GameServer {
-    private int port;
+    private int selfPortNum;
     private Set<UserThread> userThreads;
     private int userNum;
-    private int centralPortNum;
+    private int chatPortNum;
     private static OutputStream out;
     private GameLogic gameLogic;
+    private Peer peer;
  
-    public GameServer(int port) {
-        this.port = port;
+    public GameServer(int selfPortNum, int chatPortNum) {
+        this.selfPortNum = selfPortNum;
+        this.chatPortNum = chatPortNum;
         this.userThreads = new HashSet<>();
         this.userNum = 0;
-        this.centralPortNum = 0;
         this.gameLogic = new GameLogic();
+        this.initPeerToPeer();
     }
+    
  
     public void execute() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+        try (ServerSocket serverSocket = new ServerSocket(selfPortNum)) {
  
-            // System.out.println("GameServer: listening on port " + port);
+            // System.out.println("GameServer: listening on selfPortNum " + selfPortNum);
  
             while (true) {
             
@@ -57,21 +61,22 @@ public class GameServer {
     public static void main(String[] args) {
         /*
         if (args.length < 1) {
-            System.out.println("Syntax: java GameServer <port-number>");
+            System.out.println("Syntax: java GameServer <selfPortNum-number>");
             System.exit(0);
         }
         */
 
         // TODO change so that this number is not static. Will otherwise throw an error when connecting
         // multiple GameServers to the head server
-        int port = 21001;  //Integer.parseInt(args[0]);
+        int selfPortNum = 21001;  //Integer.parseInt(args[0]);
+        int chatPortNum = 21002;
 
         String hostname = "127.0.0.1";
-        int headport = 32156; // Integer.parseInt(args[1]);
+        int headPortNum = 32156; // Integer.parseInt(args[1]);
  
         // Connect to the head server
         try  {
-            Socket clientSocket = new Socket(hostname, headport);
+            Socket clientSocket = new Socket(hostname, headPortNum);
             // System.out.println("GameServer: Connected to head server.");
             out = clientSocket.getOutputStream();
             DataOutputStream dataOut = new DataOutputStream(out);
@@ -82,7 +87,7 @@ public class GameServer {
         }
 
         // Create the game server and run it
-        GameServer server = new GameServer(port);
+        GameServer server = new GameServer(selfPortNum, chatPortNum);
         server.execute();
     }
  
@@ -105,11 +110,12 @@ public class GameServer {
             }
     }
 
-    public void setCentralPortNum(int portNum) {
-        centralPortNum = portNum;
+    public int getCentralPortNum() {
+        return this.chatPortNum;
     }
 
-    public int getCentralPortNum() {
-        return centralPortNum;
+    public void initPeerToPeer(){
+        this.peer = new Peer(this.chatPortNum, "server");
+        this.peer.start();
     }
 }

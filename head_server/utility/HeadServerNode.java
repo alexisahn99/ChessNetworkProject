@@ -63,7 +63,7 @@ public class HeadServerNode {
     }
 
     public boolean addPlayer(PlayerNode client) {
-        if (IDManagement.addClientId(client.getClientId())) {
+        if (IDManagement.addClientId(client.getSelfPortNum())) {
             this.players.add(client);
             return true; // Client added successfully
         } else {
@@ -87,7 +87,7 @@ public class HeadServerNode {
             if (player.getPortNumber() == portNumber) {
                 iterator.remove(); 
                 IDManagement.removePortNumber(portNumber); 
-                IDManagement.removeClientId(player.getClientId());
+                IDManagement.removeClientId(player.getSelfPortNum());
                 return true; 
             }
         }

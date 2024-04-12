@@ -13,7 +13,7 @@ public class PlayerNode {
         return this.portNumber;
     }
 
-    public String getClientId() {
+    public String getSelfPortNum() {
         return this.clientId;
     }
 

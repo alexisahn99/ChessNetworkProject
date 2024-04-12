@@ -6,23 +6,24 @@ import java.util.*;
 
 public class Peer {
     private final int selfPortNum;
-    private final int centralPortNum;
     private final Set<Connection> connections = Collections.synchronizedSet(new HashSet<>());
     private ServerSocket serverSocket;
     private PeerGUI gui;
     private String userName;
 
-    public Peer(int selfPortNum, String userName, int centralPortNum) {
+    public Peer(int selfPortNum, String userName) {
         this.selfPortNum = selfPortNum;
         this.userName = userName;
-        this.centralPortNum = centralPortNum;
     }
 
     public void start() {
         try {
             serverSocket = new ServerSocket(selfPortNum);
             //Create GUI by passing Peer and UserName
-            gui = new PeerGUI(this, this.userName);
+            if (userName != "server") {
+                gui = new PeerGUI(this, this.userName);
+            }
+            
             new Thread(this::acceptConnections).start();
             new Thread(this::handleUserInput).start();
 
@@ -88,7 +89,7 @@ public class Peer {
 
     public void connectToPeer(int centralPortNum) {
         try {
-            String host = "localhost";
+            String host = "localhost"; // TODO: may need to change
             Socket peerSocket = new Socket(host, centralPortNum);
             Connection connection = new Connection(peerSocket, this);
             connections.add(connection);

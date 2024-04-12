@@ -7,52 +7,38 @@ import java.util.ArrayList;
 import server.model.ChessPieces.ChessPieceColor;
 import utility.FunctionFlag;
 import utility.Tuple;
-import peer_to_peer.Peer;
 
 
 public class GameClient {
     private static ObjectOutputStream out;
     private static ObjectInputStream in;
     private static GameView gameView;
-    private static int selfPortNum;
-    private int centralPortNum;
-    private static String userName;
-    private static Peer peer;
+
+    private static int centralPortNum;
 
     public static void main(String[] args) {
-        
-        if (args.length = 2) {
-            selfPortNum = arg[0];
-            userName = arg[1];
-            System.out.println("Usage: java TestClient <server IP> <port number>");
+        int selfPortNum;
+        String userName;
+        if (args.length == 2) {
+            selfPortNum = Integer.parseInt(args[0]);
+            userName = args[1];
+        }
+        else {
+            System.out.println("Usage: java GameClient <selfPortNum> <userName>");
             return;
         }
     
         String hostname = "127.0.0.1"; //args[0];
-        int port = 21001; // Integer.parseInt(args[1]);
+        int gameServerPort = 21001; // Integer.parseInt(args[1]);
 
         try {
-            Socket clientSocket = new Socket(hostname, port);
+            Socket clientSocket = new Socket(hostname, gameServerPort);
             // System.out.println("Connected to server.");
 
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
-            //clientID = 10; //TODO: Hardcoded for now
-            //userName = "Brandon";
-            gameView = new GameView(clientID, out);
+            gameView = new GameView(selfPortNum, userName, out);
             gameView.initializeDisplay();
-            //peer = new Peer(selfPortNum, userName, centralPortNum)
-            peer = new Peer(selfPortNum, userName);
-            peer.start();
-            
-            if (args.length == 3) {
-                String peerHost = args[1];
-                int peerPort = Integer.parseInt(args[2]);
-                peer.connectToPeer(peerPort);
-            }
-            if(centralPortNum != null){
-
-            }
 
             while(true){
                 try{
@@ -100,6 +86,10 @@ public class GameClient {
                     gameView.disableBoard();
                     gameView.update(pieceLocations, unicodes);
                     gameView.displayCheckMateStatus(currPlayer);
+                    break;
+                case PORT:
+                    // set port number
+                    gameView.initPeerToPeer(tuple.getCentralPortNum());
                     break;
                 default:
                     //incorrect flag recieved ?

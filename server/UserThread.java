@@ -33,7 +33,10 @@ public class UserThread extends Thread {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             // System.out.println("UserThread: Input and Output streams setup");
 
+            // initialize board view when you first join
             this.sendMove(gameLogic.getAllChessPieces());
+            Tuple temp = new Tuple(FunctionFlag.PORT, null, null, false, false, null, server.getCentralPortNum());
+            this.sendMove(temp);
             if (this.playerColor != gameLogic.getCurrentPlayer()) {
                 this.disableBoard(gameLogic.getCurrentPlayer());
             }
@@ -48,10 +51,6 @@ public class UserThread extends Thread {
                     // Move contains [row, col, port#]
                     Move curMove = (Move) in.readObject();
                     playerPortNumber = curMove.getPortNum();
-
-                    if (server.getCentralPortNum() == 0) {
-                        server.setCentralPortNum(playerPortNumber);
-                    }
                     
                     Tuple tuple = gameLogic.checkMove(playerColor, curMove, playerPortNumber);
 
@@ -120,4 +119,5 @@ public class UserThread extends Thread {
     public int getPortNumber() {
         return this.playerPortNumber;
     }
+
 }
