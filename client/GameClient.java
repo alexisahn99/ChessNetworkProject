@@ -146,7 +146,7 @@ public class GameClient {
             in = new ObjectInputStream(clientSocket.getInputStream());
             clientID = 10; //TODO: Hardcoded for now    
             gameView = new GameView(clientID, out);
-            gameView.setInitDisplay();
+            gameView.initializeDisplay();
 
             while(true){
                 try{
@@ -169,42 +169,35 @@ public class GameClient {
             ChessPieceColor currPlayer = tuple.getCurrentPlayerColor();
             ArrayList<String> unicodes = tuple.getChessPieceUnicode();
 
-            gameView.updateDisplay(currPlayer);
-            //if king is not in checkmate (game still going)
-            if(!tuple.isCheckMate()){
-                if(tuple.isCheck() == true){
-                    gameView.displayCheckStatus();
-                }
-                switch(flag){
-                    case DESTINATION:
-                        //Outline all possible moves for player
-                        gameView.drawPossibleMoves(pieceLocations);
-                        break;
-                    case SOURCE:
-                        //Enable the squares for player to move
-                        gameView.enableSquares(pieceLocations);
-                        break;
-                    case REPAINT:
-                        //Update the screen for the next players turn
-                        gameView.update(pieceLocations, unicodes);
-                        break;
-                    case DISABLE:
-                        gameView.disableBoard();
-                        break;
-                    default:
-                        //incorrect flag recieved ?
-                        break;
-                }
+            gameView.displayCurrentPlayer(currPlayer);
+            
+            if(tuple.isCheck()){
+                gameView.displayCheckStatus();
             }
-            else {
-                //TODO: Handle Game Over (CHECK MATE) Here
-                // 1. display current player color
-                // 2. is check
-                // 3. is game over, who is winner?
-                // gameView.update(pieceLocations, unicodes);
-                // System.out.println(pieceLocations.size());
-                // System.out.println(unicodes.size());
-                gameView.displayCheckMateStatus(currPlayer);
+            switch(flag){
+                case DESTINATION:
+                    //Outline all possible moves for player
+                    gameView.drawPossibleMoves(pieceLocations);
+                    break;
+                case SOURCE:
+                    //Enable the squares for player to move
+                    gameView.enableSquares(pieceLocations);
+                    break;
+                case REPAINT:
+                    //Update the screen for the next players turn
+                    gameView.update(pieceLocations, unicodes);
+                    break;
+                case DISABLE:
+                    gameView.disableBoard();
+                    break;
+                case CHECKMATE:
+                    gameView.disableBoard();
+                    gameView.update(pieceLocations, unicodes);
+                    gameView.displayCheckMateStatus(currPlayer);
+                    break;
+                default:
+                    //incorrect flag recieved ?
+                    break;
             }
         }
     }

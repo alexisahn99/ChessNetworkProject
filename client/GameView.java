@@ -109,12 +109,12 @@ public class GameView {
 
     }
 
-    public void setInitDisplay(){
+    public void initializeDisplay(){
         this.disableBoard();
         statusLabel.setText("Current Player: White");
     }
 
-    public void updateDisplay(ChessPieceColor color){
+    public void displayCurrentPlayer(ChessPieceColor color){
         if(color == ChessPieceColor.W){
             statusLabel.setText("Current Player: White");
         }

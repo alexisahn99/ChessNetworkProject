@@ -58,6 +58,9 @@ public class Controller {
         ArrayList<int[]> movableSquares = this.board.getPiecesLocation(this.getCurrentPlayer());
         boolean isCheck = this.board.isCheck();
         boolean isCheckMate = this.board.isCheckMate();
+        if (isCheckMate) {
+            functionFlag = FunctionFlag.CHECKMATE;
+        }
         return new Tuple(functionFlag, movableSquares, null, isCheck, isCheckMate, this.getCurrentPlayer(), 0);
     }
 
@@ -67,6 +70,9 @@ public class Controller {
         ArrayList<String> allCurrentPieceUnicodes = new ArrayList<>();
         boolean isCheck = this.board.isCheck();
         boolean isCheckMate = this.board.isCheckMate();
+        if (isCheckMate) {
+            functionFlag = FunctionFlag.CHECKMATE;
+        }
 
         for (int[] piece : allCurrentPieces) {
             int row = piece[0];

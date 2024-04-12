@@ -25,6 +25,11 @@ public class GameLogic {
         }
     }
 
+    public ChessPieceColor getCurrentPlayer() {
+        return controller.getCurrentPlayer();
+    }
+
+
     public Tuple getAllChessPieces() {
         return controller.getAllChessPieces();
     }
