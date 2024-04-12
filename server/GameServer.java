@@ -15,12 +15,13 @@ public class GameServer {
     private GameLogic gameLogic;
     private PrintWriter out;
  
-    public GameServer(int port) {
+    public GameServer(int port, int centralPortNum) {
         this.port = port;
         this.userThreads = new HashSet<>();
         this.userNum = 0;
         this.centralPortNum = 0;
         this.gameLogic = new GameLogic();
+        this.centralPortNum = centralPortNum;
         String hostname = "127.0.0.1";
         int headport = 32156; // Integer.parseInt(args[1]);
  
