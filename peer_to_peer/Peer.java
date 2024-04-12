@@ -55,13 +55,19 @@ public class Peer {
     }
 
     public void sendMessage(String message) {
-        connections.forEach(connection -> connection.sendMessage(message));
-        gui.appendMessage(this.userName + ": " + message);
+        String newMessage = this.userName + ": " + message;
+        connections.forEach(connection -> connection.sendMessage(newMessage));
+        if (userName != "server") {
+            gui.appendMessage(newMessage);
+        }
+        
     }
 
-    public void receiveMessage(String message, String userName, Connection sourceConnection) {
-        System.out.println(userName + ": " + message);
-        gui.appendMessage(userName + ": " + message);
+    public void receiveMessage(String message, Connection sourceConnection) {
+        // System.out.println(userName + ": " + message);
+        if (userName != "server") {
+            gui.appendMessage(message);
+        }
         // Forward the message to other peers, excluding the source
         forwardMessage(message, sourceConnection);
     }
