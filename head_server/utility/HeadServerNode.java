@@ -72,7 +72,7 @@ public class HeadServerNode {
 
 
     public void addPlayer(PlayerNode client) {
-        IDManagement.allClientIDs.add(client.getClientId());
+        IDManagement.allUserNames.add(client.getUserName());
         IDManagement.allPortNumber.add(client.getPortNumber());
         this.players.add(client);
     }
@@ -85,6 +85,8 @@ public class HeadServerNode {
         }
         return null; 
     }
+
+    /*
 
     public boolean removePlayer(int serverPortNumber) {
         Iterator<PlayerNode> iterator = this.players.iterator();
@@ -99,5 +101,6 @@ public class HeadServerNode {
         }
         return false;
     }
+    */
 
 }

@@ -1,11 +1,11 @@
 package head_server.utility;
 
 public class PlayerNode {
-    private String clientId;
+    private String userName;
     private int portNumber; // used for P2P connections
 
-    public PlayerNode(String clientId, int portNumber) {
-        this.clientId = clientId;
+    public PlayerNode(String userName, int portNumber) {
+        this.userName = userName;
         this.portNumber = portNumber;
     }
 
@@ -13,11 +13,15 @@ public class PlayerNode {
         return this.portNumber;
     }
 
-    public String getSelfPortNum() {
-        return this.clientId;
+    public int getSelfPortNum() {
+        return this.portNumber;
+    }
+
+    public String getUserName() {
+        return this.userName;
     }
 
     public void setClientId(String clientId) {
-        this.clientId = clientId;
+        this.userName = userName;
     }
 }

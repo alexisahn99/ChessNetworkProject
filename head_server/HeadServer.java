@@ -124,7 +124,7 @@ public class HeadServer implements Runnable
                     String playerID = in.readLine();
 
                     // While loop checks if playerID is already in use and accepts another ID
-                    while (IDManagement.allClientIDs.contains(playerID)) {
+                    while (IDManagement.allUserNames.contains(playerID)) {
                         out.println("Nickname is already in use. Enter another nickname: ");
                         playerID = in.readLine();
                     }

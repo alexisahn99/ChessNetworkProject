@@ -4,17 +4,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class IDManagement {
-    public static Set<String> allClientIDs = new HashSet<>();
+    public static Set<String> allUserNames = new HashSet<>();
     public static Set<Integer> allPortNumber = new HashSet<>();
 
     // Adds a client ID to the set if not already present, ensuring uniqueness
     public static boolean addClientId(String clientId) {
-        return allClientIDs.add(clientId);
+        return allUserNames.add(clientId);
     }
 
     // Removes a client ID from the set
     public static boolean removeClientId(String clientId) {
-        return allClientIDs.remove(clientId);
+        return allUserNames.remove(clientId);
     }
 
     // Adds a server port to the set if not already present, ensuring uniqueness

@@ -32,7 +32,7 @@ public class GameServerNode {
         }
         return null; 
     }
-
+/*
     public boolean removePlayer(int serverPortNumber) {
         Iterator<PlayerNode> iterator = this.allPlayers.iterator();
         while (iterator.hasNext()) {
@@ -45,6 +45,6 @@ public class GameServerNode {
             }
         }
         return false;
-    }
+    } */
 }
 
