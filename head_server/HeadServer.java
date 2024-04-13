@@ -183,7 +183,7 @@ public class HeadServer implements Runnable
                         }
 
                         else {
-                            if (IDManagement.allPortNumber.contains(clientToPortNum)) {
+                            if (headServerNode.findGameServerByPort(clientToPortNum) == 1) {
                                 out.println(message);
                                 System.out.println("Connecting client to server with port number: " + message);
                                 shutdown();

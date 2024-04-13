@@ -42,13 +42,13 @@ public class HeadServerNode {
         IDManagement.allPortNumber.add(server.getPortNumber());
     }
 
-    public GameServerNode findGameServerByPort(int portNumber) {
+    public int findGameServerByPort(int portNumber) {
         for (GameServerNode gameServer : this.gameServers) {
             if (gameServer.getPortNumber() == portNumber) {
-                return gameServer; // Found the server with the specified port number
+                return 1; // Found the server with the specified port number
             }
         }
-        return null; // No server with the specified port number was found
+        return 0; // No server with the specified port number was found
     }
 
     public boolean removeGameServer(int portNumber) {
