@@ -72,10 +72,12 @@ public class GameClient {
                     serverMessage = headIn.readLine();
                     if (serverMessage.equals("games")) {
                         serverMessage = headIn.readLine();
+                        
                         while (!serverMessage.equals("over")) {
                             System.out.println(serverMessage);
                             serverMessage = headIn.readLine();
                         }
+
                     }
                     else if (serverMessage.equals("newgame")) {
                         serverMessage = headIn.readLine();

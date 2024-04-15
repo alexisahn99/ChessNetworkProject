@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class HeadServerGUI extends JFrame {
+
     public HeadServerGUI() {
         setTitle("Head Server");
         setSize(300, 200);

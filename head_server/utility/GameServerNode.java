@@ -32,7 +32,7 @@ public class GameServerNode {
         }
         return null; 
     }
-/*
+
     public boolean removePlayer(int serverPortNumber) {
         Iterator<PlayerNode> iterator = this.allPlayers.iterator();
         while (iterator.hasNext()) {
@@ -40,11 +40,11 @@ public class GameServerNode {
             if (player.getPortNumber() == portNumber) {
                 iterator.remove(); 
                 IDManagement.removePortNumber(portNumber); 
-                IDManagement.removeClientId(player.getSelfPortNum());
+                IDManagement.removeClientId(player.getUserName());
                 return true; 
             }
         }
         return false;
-    } */
+    } 
 }
 

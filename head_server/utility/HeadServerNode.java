@@ -90,7 +90,7 @@ public class HeadServerNode {
         return null; 
     }
 
-    /*
+    
 
     public boolean removePlayer(int serverPortNumber) {
         Iterator<PlayerNode> iterator = this.players.iterator();
@@ -99,12 +99,12 @@ public class HeadServerNode {
             if (player.getPortNumber() == portNumber) {
                 iterator.remove(); 
                 IDManagement.removePortNumber(portNumber); 
-                IDManagement.removeClientId(player.getSelfPortNum());
+                IDManagement.removeClientId(player.getUserName());
                 return true; 
             }
         }
         return false;
     }
-    */
+    
 
 }
