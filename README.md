@@ -30,7 +30,6 @@ Each directory is equipped with specific Java files that contribute to the overa
 ### Head Server
 - **GameThread.java**: Dedicated to handling a single game or client connection in a multi-threaded server environment.
 - **HeadServer.java**: Coordinates all game-related activities and manages `GameThread` instances.
-- **HeadServerGUI.java**: Provides a GUI for the server, allowing for real-time server management and monitoring.
 
 ### Peer-to-Peer
 - **Peer.java**: Manages the logic related to each peer in the network.
