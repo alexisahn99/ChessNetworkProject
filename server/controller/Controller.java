@@ -7,8 +7,6 @@ import server.model.ChessPieces.ChessPieceColor;
 import utility.FunctionFlag;
 import utility.Tuple;
 
-// TODO: removing pawn at the end option for now in selectDestination()
-// TODO: when REPAINT we need to send info of what piece is where
 
 public class Controller {
     private ChessBoard board;
@@ -126,29 +124,5 @@ public class Controller {
         return this.board.isCheckMate();
     }
 
-    // TODO: never used
-    // public void convertPawn(String unicode, ChessPieceColor color)
-    // {
-    //     this.board.addNewPiece(this.currentChessPiece.getCurrentRow(), this.currentChessPiece.getCurrentCol(), unicode, color);
-    //     this.endOfTurn();
-    // }
-
-    // TODO: never used; need to implement for proper game server function
-    // public boolean endOfTurn()
-    // {
-    //     this.switchPlayers();
-    //     // Check for game over
-    //     if (this.board.isGameOver()) 
-    //     {
-    //         System.out.println("Game over!");
-    //     }
-    //     else
-    //     {
-    //         ArrayList<int[]> allCurrentPieces = this.board.getPiecesLocation(this.board.getCurrentPlayer());
-    //         // this.view.enableSquares(allCurrentPieces);
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
 }

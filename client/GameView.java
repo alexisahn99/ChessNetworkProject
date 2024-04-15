@@ -161,10 +161,10 @@ public class GameView {
         }
     }
 
-    public void initPeerToPeer(int centralPortNum){
+    public void initPeerToPeer(int centralPortNum, String headServerIP){
         this.peer = new Peer(this.selfPortNum, this.userName);
         this.peer.start();
-        this.peer.connectToPeer(centralPortNum);
+        this.peer.connectToPeer(centralPortNum, headServerIP);
     }
 
     public void removeDots() {
@@ -202,17 +202,7 @@ public class GameView {
             this.boardSegment[row][col].setFont(new Font("Dialog", Font.PLAIN, 45));
         }
     }
-    /*
-    public void displayWinner(String winner) {
-        this.disableBoard();
-        this.statusLabel.setText("The Winner Is: " + winner);
-        this.statusLabel.setFont(new Font("Dialog", Font.BOLD, 20));
-    }
-    
-    public void promptNewPiece() {
-        ConvertPawn convertPanel = new ConvertPawn(this.controller.getCurrentPlayer(), this.controller);
-    }
-    */
+
 }   
 
 class ButtonClickListener implements ActionListener {

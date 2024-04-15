@@ -52,19 +52,11 @@ To compile the entire project, you can use the provided `compile.sh` script:
 ```
 
 ### Execution
-Run the server and client applications using the following commands:
+Run the head server and client applications using the following commands:
 ```bash
-java GameServer
-java GameClient
-```
-
-For peer-to-peer functionalities, start the respective application:
-```bash
-java Peer
+java head_server/HeadServer
+java client/GameClient <HEAD SERVER IP ADDRESS>
 ```
 
 ## Additional Scripts
 - **cleanup.sh**: A script to clean up any temporary files or compile artifacts to maintain a clean project environment.
-
-## Conclusion
-ChessNetworkProject offers a comprehensive setup for playing chess over a network, supporting multiple clients and robust server management. This README provides an overview and guide on navigating and utilizing the various components of the project.
