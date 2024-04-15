@@ -36,6 +36,10 @@ public class HeadServerNode {
     public ArrayList<GameServerNode> getAllGameServers() {
         return gameServers;
     }
+
+    public int getNumGameServers() {
+        return gameServers.size();
+    }
   
     public void addGameServer(GameServerNode server) {
         this.gameServers.add(server);

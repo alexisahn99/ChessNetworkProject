@@ -60,23 +60,36 @@ public class GameClient {
                 }
 
                  // Printing available ports
-                serverMessage = headIn.readLine();
-                while (!serverMessage.equals("over")) {
-                    System.out.println(serverMessage);
-                    serverMessage = headIn.readLine();
-                }
 
                 String message;
+                serverMessage = headIn.readLine();
+                System.out.println(serverMessage);
 
                 while (!done)
                 {
                     message = inReader.readLine();
                     headOut.println(message);
                     serverMessage = headIn.readLine();
-                    if (!serverMessage.equals("no")) {
+                    if (serverMessage.equals("games")) {
+                        serverMessage = headIn.readLine();
+                        while (!serverMessage.equals("over")) {
+                            System.out.println(serverMessage);
+                            serverMessage = headIn.readLine();
+                        }
+                    }
+                    else if (serverMessage.equals("newgame")) {
+                        serverMessage = headIn.readLine();
                         this.gamePortNum = Integer.parseInt(serverMessage);
                         System.out.println("Moving to game server");
                         transferToPort(this.gamePortNum);
+
+                    }
+                    else if (serverMessage.equals("join")) {
+                        serverMessage = headIn.readLine();
+                        this.gamePortNum = Integer.parseInt(serverMessage);
+                        System.out.println("Moving to game server");
+                        transferToPort(this.gamePortNum);
+
                     }
                 // TODO check port number to ensure it's a server
                     else {

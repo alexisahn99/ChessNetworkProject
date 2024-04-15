@@ -136,12 +136,10 @@ public class HeadServer implements Runnable
 
                     System.out.println(playerID + " connected"); // Prints to HeadServer terminal the playerID which connected
 
+                    out.println("HOW TO SET UP GAME: For new game: press any CHARACTER or just enter. To see current games, type in 'games'. This will show you a list of current port numbers of available games to join. Type in the port number of the game you want to play, and press enter.");
+
                     // For loop prints out the port numbers of all available game servers so player can see what are available
                     // This will need to be changed when GUI is created
-                    for (GameServerNode gameServer : headServerNode.getAllGameServers()) {
-                        out.println(gameServer.getPortNumber());
-                    }
-                    out.println("over");
 
                     /* While loop accepts terminal input from player. If player enters "New Server", a game server is created and 
                        the port number of the new server is sent to the client. The head server then immediately ends connection 
@@ -168,8 +166,9 @@ public class HeadServer implements Runnable
                             isInt = true;
                         } catch (NumberFormatException e) {}
 
-                        System.out.println(message);
-                        if (!isInt) {
+
+                        if ( (!isInt) && (!message.equals("games")) ) {
+                            out.println("newgame");
                             int gameServerPort = headServerNode.findPortNum(); // Finds open port
                             GameServerNode gameServerNode = new GameServerNode(gameServerPort);
                             headServerNode.addGameServer(gameServerNode); // Adds gameServerNode to headServerNode gameServers array list
@@ -179,11 +178,24 @@ public class HeadServer implements Runnable
                             out.println(gameServerPort);
                             shutdown();
                             gameServer.execute();
-                            
+                        }
+                        else if (message.equals("games")) {
+                            out.println("games");
+                            if (headServerNode.getNumGameServers() == 0) {
+                                out.println("No games available");
+                            }
+                            else {
+                                out.println("Port numbers of games you can join: ");
+                                for (GameServerNode gameServer : headServerNode.getAllGameServers()) {
+                                    out.println(gameServer.getPortNumber());
+                                }
+                            }
+                            out.println("over");
                         }
 
                         else {
                             if (headServerNode.findGameServerByPort(clientToPortNum) == 1) {
+                                out.println("join");
                                 out.println(message);
                                 System.out.println("Connecting client to server with port number: " + message);
                                 shutdown();
