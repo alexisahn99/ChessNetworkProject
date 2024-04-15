@@ -15,30 +15,25 @@ public class GameClient {
     private BufferedReader headIn;
     private PrintWriter headOut;
     private static GameView gameView;
-    private static int centralPortNum;
     private Socket client;
     private boolean done;
-    private boolean newConnection;
     private int headPortNum;
     private int gamePortNum;
     private int selfPortNum;
-    private String hostname;
-    private boolean notConnected;
+    private static String headServerIP;
     private String userName;
 
-    public GameClient(String hostname, int headPortNum) {
+    public GameClient(String headServerIP, int headPortNum) {
         done = false;
-        newConnection = false;
-        notConnected = false;
         this.headPortNum = headPortNum;
-        this.hostname = hostname;
+        this.headServerIP = headServerIP;
     }
 
     public void run()
     {
         try
         {
-            client = new Socket(this.hostname, this.headPortNum);
+            client = new Socket(this.headServerIP, this.headPortNum);
             headOut = new PrintWriter(client.getOutputStream(), true);
             headIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -91,7 +86,6 @@ public class GameClient {
                         transferToPort(this.gamePortNum);
 
                     }
-                // TODO check port number to ensure it's a server
                     else {
                         System.out.println("Incorrect entry. Enter port number or any letter for new server");
                     }
@@ -150,11 +144,9 @@ public class GameClient {
 
     public void runGame() {
         try {
-
-            Socket clientSocket = new Socket(this.hostname, this.gamePortNum);
+            Socket clientSocket = new Socket(this.headServerIP, this.gamePortNum);
             // System.out.println("Connected to server.");
 
-          // TODO need to assign the selfPortNum from the head server
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
             gameView = new GameView(selfPortNum, userName, out);
@@ -174,7 +166,7 @@ public class GameClient {
         }
     }
 
-    private static void handleInput(Object input){
+    private void handleInput(Object input){
         if(input instanceof Tuple){
             Tuple tuple = (Tuple) input;
             FunctionFlag flag = tuple.getFunctionFlag();
@@ -210,7 +202,7 @@ public class GameClient {
                     break;
                 case PORT:
                     // set port number
-                    gameView.initPeerToPeer(tuple.getCentralPortNum());
+                    gameView.initPeerToPeer(tuple.getCentralPortNum(), this.headServerIP);
                     break;
                 default:
                     //incorrect flag recieved ?
@@ -222,14 +214,13 @@ public class GameClient {
     public static void main(String[] args) {
         
         if (args.length < 1) {
-            System.out.println("Usage: java GameClient <server IP>");
+            System.out.println("Usage: java GameClient <head server IP>");
             return;
         }
         
-        String hostname = args[0];
         int headPortNum = 32156; 
 
-        GameClient gameClient = new GameClient(hostname, headPortNum);
+        GameClient gameClient = new GameClient(args[0], headPortNum);
         gameClient.run();
     }
 }
