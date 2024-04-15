@@ -93,10 +93,9 @@ public class Peer {
         }
     }
 
-    public void connectToPeer(int centralPortNum) {
+    public void connectToPeer(int centralPortNum, String headServerIP) {
         try {
-            String host = "localhost"; // TODO: may need to change
-            Socket peerSocket = new Socket(host, centralPortNum);
+            Socket peerSocket = new Socket(headServerIP, centralPortNum);
             Connection connection = new Connection(peerSocket, this);
             connections.add(connection);
             new Thread(connection).start();
